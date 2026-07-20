@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 
 /**
@@ -21,7 +22,13 @@ class ScreenCaptureService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val withMic = intent?.getBooleanExtra(EXTRA_WITH_MIC, false) ?: false
+        // startForeground SENKRON cagrilir; donduugunde FGS aktiftir.
         startForegroundInternal(withMic)
+        Log.i(TAG, "FGS aktif (type=mediaProjection${if (withMic) "|microphone" else ""})")
+        // Android 14: MediaProjection ancak FGS aktifken olusturulabilir.
+        // Bekleyen activity'ye "artik guvenli" sinyali ver (ayni process, main thread).
+        readyListener?.invoke()
+        readyListener = null // tek atimlik
         return START_NOT_STICKY
     }
 
@@ -56,5 +63,12 @@ class ScreenCaptureService : Service() {
 
     companion object {
         private const val NOTIF_ID = 1001
+
+        /**
+         * startForeground tamamlandiginda (FGS gercekten aktif) bir kez cagrilir.
+         * PublisherActivity, startCapture'i bu sinyalden SONRA tetikler.
+         */
+        @Volatile
+        var readyListener: (() -> Unit)? = null
     }
 }

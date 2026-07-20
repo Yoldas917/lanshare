@@ -64,17 +64,33 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK && result.data != null) {
-            status("Ekran yakalama izni verildi")
-            // Android 14 sirasi: once FGS'yi (ses varsa microphone tipiyle) baslat, sonra capture
+            status("Ekran yakalama izni verildi, FGS baslatiliyor...")
+            val data = result.data!!
+            // Android 14: MediaProjection olusturulmadan ONCE mediaProjection tipli
+            // FGS AKTIF olmali. startForegroundService async'tir (Binder IPC ->
+            // onStartCommand main thread'e sonradan siralanir); tek bir post yarisi
+            // kaybedebilir -> SecurityException. Bu yuzden capture, servisin
+            // startForeground'u SENKRON tamamladiktan sonra verdigi sinyalle baslar.
+            ScreenCaptureService.readyListener = {
+                mainHandler.removeCallbacks(fgsTimeoutRunnable)
+                Log.d(TAG, "FGS mediaProjection aktif -> startCapture cagriliyor")
+                beginCapture(data)
+            }
+            // Emniyet: sinyal 4 sn'de gelmezse sessiz takilma olmasin
+            mainHandler.postDelayed(fgsTimeoutRunnable, 4000)
             val svc = Intent(this, ScreenCaptureService::class.java)
                 .putExtra(EXTRA_WITH_MIC, withAudio)
             startForegroundService(svc)
-            // FGS'nin startForeground'u calissin diye bir sonraki main-loop turuna ertele
-            mainHandler.post { beginCapture(result.data!!) }
         } else {
             status("Ekran yakalama izni REDDEDILDI")
             Log.e(TAG, "MediaProjection izni reddedildi")
         }
+    }
+
+    private val fgsTimeoutRunnable = Runnable {
+        ScreenCaptureService.readyListener = null
+        status("FGS hazir sinyali gelmedi (4 sn) — bildirim izni/battery kisitlarini kontrol et")
+        Log.e(TAG, "FGS ready sinyali zaman asimi; startCapture cagrilmadi")
     }
 
     // Runtime izinleri (POST_NOTIFICATIONS + ses aciksa RECORD_AUDIO); sonra ekran yakalama
@@ -382,6 +398,8 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
 
     override fun onDestroy() {
         super.onDestroy()
+        ScreenCaptureService.readyListener = null
+        mainHandler.removeCallbacks(fgsTimeoutRunnable)
         mainHandler.removeCallbacks(fpsDiagRunnable)
         fpsCapturerRef = null
         try {
