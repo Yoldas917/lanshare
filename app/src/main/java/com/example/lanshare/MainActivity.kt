@@ -37,8 +37,9 @@ class MainActivity : AppCompatActivity() {
 
         restoreState()
 
-        binding.publisherCard.setOnClickListener { launch("publisher") }
-        binding.viewerCard.setOnClickListener { launch("viewer") }
+        // Manuel yedek yol (Gelismis altinda): elle IP:PORT + rol
+        binding.manualPublishButton.setOnClickListener { launch("publisher") }
+        binding.manualViewButton.setOnClickListener { launch("viewer") }
         binding.helpCard.setOnClickListener {
             startActivity(Intent(this, HelpActivity::class.java))
         }

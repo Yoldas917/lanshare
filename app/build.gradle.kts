@@ -44,6 +44,8 @@ dependencies {
     implementation("io.github.webrtc-sdk:android:125.6422.07")
     // Signaling icin WebSocket istemcisi
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    // Gomulu signaling sunucusu (cihaz ici; Node sunucusuna bagimliligi kaldirir)
+    implementation("org.java-websocket:Java-WebSocket:1.6.0")
 
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
