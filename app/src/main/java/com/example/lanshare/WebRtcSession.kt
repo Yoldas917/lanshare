@@ -99,16 +99,24 @@ class WebRtcSession(
     fun createPeerConnection() {
         val rtcConfig = PeerConnection.RTCConfiguration(emptyList()).apply {
             sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN
-            continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
+            // GATHER_ONCE: LAN'dayiz, ag degisimi beklemiyoruz. CONTINUALLY,
+            // NetworkMonitor'e bagimli — monitor ag listesi veremezse hic aday
+            // uretilmeyebiliyordu. ONCE, arayuzleri tek seferde enumere eder.
+            continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_ONCE
         }
         peerConnection = factory.createPeerConnection(rtcConfig, object : PeerConnection.Observer {
             override fun onIceCandidate(candidate: IceCandidate) {
-                Log.d(TAG, "yerel ICE candidate: ${candidate.sdp.take(60)}...")
+                Log.d(TAG, "ICE aday uretildi (mid=${candidate.sdpMid}): ${candidate.sdp.take(60)}...")
                 callbacks.onLocalIceCandidate(candidate)
             }
 
+            override fun onIceCandidateError(event: org.webrtc.IceCandidateErrorEvent) {
+                Log.e(TAG, "ICE aday HATASI: code=${event.errorCode} ${event.errorText} " +
+                    "(addr=${event.address}:${event.port})")
+            }
+
             override fun onIceConnectionChange(newState: PeerConnection.IceConnectionState) {
-                Log.d(TAG, "ICE connection state -> $newState")
+                Log.d(TAG, "ICE state: $newState")
                 callbacks.onIceConnectionChange(newState)
             }
 
@@ -331,8 +339,10 @@ class WebRtcSession(
     fun addRemoteIceCandidate(candidate: IceCandidate) {
         if (remoteDescriptionSet) {
             peerConnection?.addIceCandidate(candidate)
+            Log.d(TAG, "ICE aday eklendi (mid=${candidate.sdpMid})")
         } else {
             pendingIce.add(candidate)
+            Log.d(TAG, "ICE aday kuyruga alindi (remote desc bekleniyor, kuyruk=${pendingIce.size})")
         }
     }
 

@@ -109,6 +109,7 @@ class SignalingClient(
                         c.getInt("sdpMLineIndex"),
                         c.getString("candidate")
                     )
+                    Log.d(TAG, "ICE aday alindi (mid=${ice.sdpMid})")
                     listener.onRemoteIce(ice)
                 }
                 "error" -> {
@@ -141,7 +142,8 @@ class SignalingClient(
             .put("sdpMLineIndex", candidate.sdpMLineIndex)
             .put("candidate", candidate.sdp)
         val json = JSONObject().put("type", "ice").put("candidate", cand)
-        ws?.send(json.toString())
+        val ok = ws?.send(json.toString()) ?: false
+        Log.d(TAG, "ICE aday gonderildi (mid=${candidate.sdpMid}, ws=$ok)")
     }
 
     fun close() {
