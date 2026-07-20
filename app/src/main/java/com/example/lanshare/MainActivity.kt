@@ -26,6 +26,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         settings = SettingsStore(this)
 
+        // Ilk acilista varsayilan dil INGILIZCE (sistem dili ne olursa olsun).
+        // Kullanicinin sonraki secimi (autoStoreLocales) her zaman onceliklidir.
+        if (!settings.langInitialized) {
+            settings.langInitialized = true
+            if (AppCompatDelegate.getApplicationLocales().isEmpty) {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"))
+            }
+        }
+
         restoreState()
 
         binding.publisherCard.setOnClickListener { launch("publisher") }
@@ -37,6 +46,10 @@ class MainActivity : AppCompatActivity() {
         binding.advancedHeader.setOnClickListener {
             binding.advancedContent.visibility =
                 if (binding.advancedContent.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
+
+        binding.liveStatsSwitch.setOnCheckedChangeListener { _, checked ->
+            settings.showLiveStats = checked
         }
 
         binding.qualityGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
@@ -88,6 +101,7 @@ class MainActivity : AppCompatActivity() {
     private fun restoreState() {
         settings.roomId?.let { binding.roomIdInput.setText(it) }
         settings.server?.let { binding.serverInput.setText(it) }
+        binding.liveStatsSwitch.isChecked = settings.showLiveStats
 
         binding.qualityGroup.check(
             when (settings.quality) {

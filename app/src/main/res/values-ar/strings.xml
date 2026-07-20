@@ -63,6 +63,19 @@
     <string name="st_error">خطأ: %1$s</string>
     <string name="st_sig_closed">أُغلق اتصال الإشارات</string>
 
+    <string name="live_stats_title">عرض معدل البت وعدد الإطارات مباشرةً</string>
+    <string name="disconnect">قطع الاتصال</string>
+
+    <string name="pair_toggle_on">إقران / كن مرئيًا</string>
+    <string name="pair_toggle_off">إيقاف الظهور</string>
+    <string name="pair_hint">أنت مرئي على الشبكة — اضغط «إقران» على الجهاز الآخر أيضًا</string>
+    <string name="nearby_label">الأجهزة القريبة</string>
+    <string name="nearby_empty">لم يُعثر على أجهزة بعد…</string>
+    <string name="dev_share_to">مشاركة شاشتي</string>
+    <string name="dev_watch">مشاهدة هذا الجهاز</string>
+    <string name="manual_label">اتصال يدوي (احتياطي)</string>
+    <string name="own_addr">هذا الجهاز: %1$s</string>
+
     <string name="vst_pub_ready">الباثّ جاهز، بانتظار العرض…</string>
     <string name="vst_pub_left">غادر الباثّ</string>
     <string name="vst_offer_received">وصل العرض — جارٍ إنشاء الرد</string>

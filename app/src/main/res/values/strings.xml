@@ -77,6 +77,21 @@
     <string name="st_error">ERROR: %1$s</string>
     <string name="st_sig_closed">Signaling closed</string>
 
+    <!-- Live stats + disconnect -->
+    <string name="live_stats_title">Show live bitrate and fps</string>
+    <string name="disconnect">Disconnect</string>
+
+    <!-- Pairing / discovery -->
+    <string name="pair_toggle_on">Pair / Be visible</string>
+    <string name="pair_toggle_off">Stop being visible</string>
+    <string name="pair_hint">Visible on the network — press Pair on the other device too</string>
+    <string name="nearby_label">Nearby devices</string>
+    <string name="nearby_empty">No devices found yet…</string>
+    <string name="dev_share_to">Share my screen</string>
+    <string name="dev_watch">Watch this device</string>
+    <string name="manual_label">Manual connection (fallback)</string>
+    <string name="own_addr">This device: %1$s</string>
+
     <!-- Viewer screen -->
     <string name="vst_pub_ready">Broadcaster ready, waiting for offer…</string>
     <string name="vst_pub_left">Broadcaster left</string>

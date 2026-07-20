@@ -53,6 +53,7 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
     private var audioTrack: AudioTrack? = null
 
     private var preferHevc = false
+    private var showLiveStats = false
 
     // Kullanici ayarlarindan gelen yayin parametreleri (SettingsStore)
     private var vw = VIDEO_WIDTH
@@ -130,7 +131,14 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
         vfps = settings.fps
         vMaxBps = settings.maxBitrateBps
         vMinBps = settings.minBitrateBps
-        Log.d(TAG, "Ayarlar: ${vw}x$vh@$vfps, bitrate max=$vMaxBps min=$vMinBps")
+        showLiveStats = settings.showLiveStats
+        Log.d(TAG, "Ayarlar: ${vw}x$vh@$vfps, bitrate max=$vMaxBps min=$vMinBps " +
+            "liveStats=$showLiveStats")
+
+        binding.disconnectButton.setOnClickListener {
+            // Tum temizlik onDestroy'da: capture/ses/FGS/signaling/PeerConnection
+            finish()
+        }
 
         eglBase = EglBase.create()
         session = WebRtcSession(this, eglBase, sessionCallbacks)
@@ -269,6 +277,7 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
     private var lastFramesEncoded = 0L
     private var lastFramesSent = 0L
     private var lastEncodeTimeS = 0.0
+    private var lastBytesSent = 0L
     private var fpsCapturerRef: ScreenCapturerAndroid? = null
     private val fpsDiagRunnable = object : Runnable {
         override fun run() {
@@ -290,10 +299,20 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
                         "%.1f".format((s.totalEncodeTimeS - lastEncodeTimeS) * 1000.0 / encDelta)
                     else "-"
                     lastEncodeTimeS = s.totalEncodeTimeS
+                    val mbps = (s.bytesSent - lastBytesSent) * 8.0 / 1_000_000.0
+                    lastBytesSent = s.bytesSent
                     Log.d(TAG, "[fps] capture=$capFps encode=$encDelta sent=$sentDelta " +
                         "statsFps=${s.fps} ${s.width}x${s.height} " +
                         "limit=${s.qualityLimitation} target=${s.targetBitrateBps / 1000}kbps " +
                         "encMs=$encMs enc=${s.encoderImpl}$audioInfo")
+                    if (showLiveStats) {
+                        val line = "${s.width}x${s.height} · ${s.fps.toInt()} fps · " +
+                            "%.1f Mbps".format(mbps)
+                        runOnUiThread {
+                            binding.liveStatsText.visibility = android.view.View.VISIBLE
+                            binding.liveStatsText.text = line
+                        }
+                    }
                     if (s.encoderImpl?.contains("SW", ignoreCase = true) == true ||
                         s.encoderImpl?.contains("libaom") == true ||
                         s.encoderImpl?.contains("OpenH264", ignoreCase = true) == true

@@ -47,7 +47,26 @@
                 android:fontFamily="monospace"
                 android:textSize="13sp"
                 android:text="@string/st_starting" />
+
+            <TextView
+                android:id="@+id/liveStatsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/text_secondary"
+                android:fontFamily="monospace"
+                android:textSize="13sp"
+                android:visibility="gone" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
+
+    <Button
+        android:id="@+id/disconnectButton"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:focusable="true"
+        android:text="@string/disconnect" />
 
 </LinearLayout>

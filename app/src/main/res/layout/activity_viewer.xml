@@ -33,4 +33,15 @@
         android:textSize="13sp"
         android:text="" />
 
+    <Button
+        android:id="@+id/disconnectButton"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:alpha="0.85"
+        android:focusable="true"
+        android:text="@string/disconnect" />
+
 </FrameLayout>

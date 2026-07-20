@@ -54,6 +54,10 @@ class ViewerActivity : AppCompatActivity(), SignalingClient.Listener {
         window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         settings = SettingsStore(this)
+        binding.disconnectButton.setOnClickListener {
+            // Temizlik onDestroy'da (signaling/PC/renderer)
+            finish()
+        }
         // Stats overlay: varsayilan kapali; dokunma veya TV kumandasi OK ile ac/kapa.
         // Root view odaklanabilir -> D-pad center click olarak gelir.
         binding.statsText.visibility =

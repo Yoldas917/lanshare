@@ -63,6 +63,19 @@
     <string name="st_error">FEHLER: %1$s</string>
     <string name="st_sig_closed">Signalisierung geschlossen</string>
 
+    <string name="live_stats_title">Live-Bitrate und fps anzeigen</string>
+    <string name="disconnect">Verbindung trennen</string>
+
+    <string name="pair_toggle_on">Koppeln / Sichtbar sein</string>
+    <string name="pair_toggle_off">Sichtbarkeit beenden</string>
+    <string name="pair_hint">Im Netzwerk sichtbar — drücken Sie auch auf dem anderen Gerät Koppeln</string>
+    <string name="nearby_label">Geräte in der Nähe</string>
+    <string name="nearby_empty">Noch keine Geräte gefunden…</string>
+    <string name="dev_share_to">Meinen Bildschirm teilen</string>
+    <string name="dev_watch">Dieses Gerät ansehen</string>
+    <string name="manual_label">Manuelle Verbindung (Fallback)</string>
+    <string name="own_addr">Dieses Gerät: %1$s</string>
+
     <string name="vst_pub_ready">Sender bereit, warte auf Angebot…</string>
     <string name="vst_pub_left">Sender hat den Raum verlassen</string>
     <string name="vst_offer_received">Angebot erhalten — Antwort wird erstellt</string>

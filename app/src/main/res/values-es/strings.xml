@@ -63,6 +63,19 @@
     <string name="st_error">ERROR: %1$s</string>
     <string name="st_sig_closed">Señalización cerrada</string>
 
+    <string name="live_stats_title">Mostrar tasa de bits y fps en vivo</string>
+    <string name="disconnect">Desconectar</string>
+
+    <string name="pair_toggle_on">Emparejar / Ser visible</string>
+    <string name="pair_toggle_off">Dejar de ser visible</string>
+    <string name="pair_hint">Visible en la red — pulsa Emparejar también en el otro dispositivo</string>
+    <string name="nearby_label">Dispositivos cercanos</string>
+    <string name="nearby_empty">Aún no se han encontrado dispositivos…</string>
+    <string name="dev_share_to">Compartir mi pantalla</string>
+    <string name="dev_watch">Ver este dispositivo</string>
+    <string name="manual_label">Conexión manual (respaldo)</string>
+    <string name="own_addr">Este dispositivo: %1$s</string>
+
     <string name="vst_pub_ready">Emisor listo, esperando oferta…</string>
     <string name="vst_pub_left">El emisor se fue</string>
     <string name="vst_offer_received">Oferta recibida — creando respuesta</string>

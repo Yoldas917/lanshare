@@ -54,6 +54,16 @@ class SettingsStore(context: Context) {
         get() = prefs.getBoolean(KEY_OVERLAY, false)
         set(v) = prefs.edit().putBoolean(KEY_OVERLAY, v).apply()
 
+    /** Yayinci ekraninda canli bitrate/fps satiri gosterilsin mi */
+    var showLiveStats: Boolean
+        get() = prefs.getBoolean(KEY_LIVE_STATS, false)
+        set(v) = prefs.edit().putBoolean(KEY_LIVE_STATS, v).apply()
+
+    /** Ilk acilista EN varsayilanini bir kez uygulamak icin bayrak */
+    var langInitialized: Boolean
+        get() = prefs.getBoolean(KEY_LANG_INIT, false)
+        set(v) = prefs.edit().putBoolean(KEY_LANG_INIT, v).apply()
+
     var roomId: String?
         get() = prefs.getString("roomId", null)
         set(v) = prefs.edit().putString("roomId", v).apply()
@@ -70,5 +80,7 @@ class SettingsStore(context: Context) {
         private const val KEY_QUALITY = "quality"
         private const val KEY_BITRATE = "bitrate_bps"
         private const val KEY_OVERLAY = "overlay_visible"
+        private const val KEY_LIVE_STATS = "show_live_stats"
+        private const val KEY_LANG_INIT = "lang_initialized"
     }
 }

@@ -177,6 +177,16 @@
                     android:text="@string/share_audio_note"
                     android:textAppearance="?attr/textAppearanceBodySmall"
                     android:textColor="@color/text_secondary" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/liveStatsSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:checked="false"
+                    android:text="@string/live_stats_title"
+                    android:textAppearance="?attr/textAppearanceTitleSmall"
+                    android:textColor="@color/text_primary" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

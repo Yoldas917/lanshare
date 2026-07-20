@@ -63,6 +63,19 @@
     <string name="st_error">HATA: %1$s</string>
     <string name="st_sig_closed">Sinyalleşme kapandı</string>
 
+    <string name="live_stats_title">Canlı bit hızı ve fps değerlerini göster</string>
+    <string name="disconnect">Bağlantıyı Kes</string>
+
+    <string name="pair_toggle_on">Eşleştir / Görünür ol</string>
+    <string name="pair_toggle_off">Görünürlüğü kapat</string>
+    <string name="pair_hint">Ağda görünürsün — diğer cihazda da Eşleştir\'e bas</string>
+    <string name="nearby_label">Yakındaki cihazlar</string>
+    <string name="nearby_empty">Henüz cihaz bulunamadı…</string>
+    <string name="dev_share_to">Ekranımı paylaş</string>
+    <string name="dev_watch">Bu cihazı izle</string>
+    <string name="manual_label">Manuel bağlantı (yedek)</string>
+    <string name="own_addr">Bu cihaz: %1$s</string>
+
     <string name="vst_pub_ready">Yayıncı hazır, offer bekleniyor…</string>
     <string name="vst_pub_left">Yayıncı ayrıldı</string>
     <string name="vst_offer_received">Offer alındı — answer üretiliyor</string>

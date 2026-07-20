@@ -225,6 +225,7 @@ class WebRtcSession(
         val height: Int,
         val targetBitrateBps: Long,    // BWE'nin encoder'a verdigi hedef
         val totalEncodeTimeS: Double,  // toplam encode suresi (delta/frame -> ms/frame)
+        val bytesSent: Long,           // gercek gonderim bitrate'i icin (delta)
         val timestampUs: Double
     )
 
@@ -248,6 +249,7 @@ class WebRtcSession(
                         height = (m["frameHeight"] as? Number)?.toInt() ?: 0,
                         targetBitrateBps = (m["targetBitrate"] as? Number)?.toLong() ?: 0L,
                         totalEncodeTimeS = (m["totalEncodeTime"] as? Number)?.toDouble() ?: 0.0,
+                        bytesSent = (m["bytesSent"] as? Number)?.toLong() ?: 0L,
                         timestampUs = report.timestampUs
                     )
                 }
