@@ -5,6 +5,9 @@
     <!-- libwebrtc NetworkMonitor'un ag arayuzlerini gorebilmesi icin sart;
          yoksa ICE host candidate uretilemeyebilir (aday hic cikmiyordu) -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- NSD/mDNS kesfi icin: MulticastLock -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />

@@ -12,6 +12,9 @@ const val EXTRA_AUDIO = "extra_audio"
 // Servise FGS tipini bildirmek icin extra (ses -> microphone tipi de eklenir)
 const val EXTRA_WITH_MIC = "extra_with_mic"
 
+// Eslestirme (NSD) akisinda kullanilan sabit oda adi
+const val PAIR_ROOM = "local"
+
 // Video hedefleri (Faz 7: sabit 1080p60, ~12 Mbps)
 const val VIDEO_WIDTH = 1920
 const val VIDEO_HEIGHT = 1080

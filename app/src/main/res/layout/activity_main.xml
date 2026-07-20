@@ -29,6 +29,52 @@
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/text_secondary" />
 
+        <!-- Eslestirme -->
+        <Button
+            android:id="@+id/pairButton"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:focusable="true"
+            android:text="@string/pair_toggle_on" />
+
+        <TextView
+            android:id="@+id/pairHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/pair_hint"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="@color/text_secondary"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/nearbyLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/nearby_label"
+            android:textAppearance="?attr/textAppearanceTitleSmall"
+            android:textColor="@color/text_primary"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/nearbyEmpty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/nearby_empty"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="@color/text_secondary"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/nearbyContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
         <!-- Ses karti -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"

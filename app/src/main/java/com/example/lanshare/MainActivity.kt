@@ -3,11 +3,17 @@ package com.example.lanshare
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.example.lanshare.databinding.ActivityMainBinding
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
+import java.net.Inet4Address
+import java.net.NetworkInterface
 
 /**
  * Acilis ekrani: rol kartlari (Yayinla/Izle), oda+sunucu girisleri, ses anahtari,
@@ -40,6 +46,26 @@ class MainActivity : AppCompatActivity() {
         // Manuel yedek yol (Gelismis altinda): elle IP:PORT + rol
         binding.manualPublishButton.setOnClickListener { launch("publisher") }
         binding.manualViewButton.setOnClickListener { launch("viewer") }
+
+        // Eslestir / Gorunur ol: gomulu signaling + NSD kayit + kesif
+        binding.pairButton.setOnClickListener {
+            if (!PairingSession.isActive) {
+                binding.pairButton.isEnabled = false
+                Thread {
+                    val ok = PairingSession.start(applicationContext)
+                    runOnUiThread {
+                        binding.pairButton.isEnabled = true
+                        if (!ok) Toast.makeText(this, R.string.st_error, Toast.LENGTH_SHORT).show()
+                        updatePairingUi()
+                        renderNearby()
+                    }
+                }.start()
+            } else {
+                PairingSession.stop()
+                updatePairingUi()
+                renderNearby()
+            }
+        }
         binding.helpCard.setOnClickListener {
             startActivity(Intent(this, HelpActivity::class.java))
         }
@@ -97,6 +123,120 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Kesif listesi degisince UI tazele; uzak join gelirse karsi rolu baslat
+        PairingSession.onDevicesChanged = { renderNearby() }
+        PairingSession.onInvite = { remoteRole -> runOnUiThread { handleInvite(remoteRole) } }
+        updatePairingUi()
+        renderNearby()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Uygulamadan tamamen cikista gorunurlugu kapat (recreate'te degil)
+        if (isFinishing && PairingSession.isActive) PairingSession.stop()
+    }
+
+    private fun updatePairingUi() {
+        val active = PairingSession.isActive
+        binding.pairButton.setText(if (active) R.string.pair_toggle_off else R.string.pair_toggle_on)
+        binding.pairHint.visibility = if (active) View.VISIBLE else View.GONE
+        binding.nearbyLabel.visibility = if (active) View.VISIBLE else View.GONE
+        // Gelismis altinda bilgi: bu cihazin adresi (manuel fallback icin)
+        val ip = if (active) localIpAddress() else null
+        if (ip != null) {
+            binding.ownAddrText.text = getString(R.string.own_addr, "$ip:${PairingSession.port}")
+            binding.ownAddrText.visibility = View.VISIBLE
+        } else {
+            binding.ownAddrText.visibility = View.GONE
+        }
+    }
+
+    private fun renderNearby() {
+        binding.nearbyContainer.removeAllViews()
+        val active = PairingSession.isActive
+        binding.nearbyEmpty.visibility =
+            if (active && PairingSession.devices.isEmpty()) View.VISIBLE else View.GONE
+        if (!active) return
+
+        val density = resources.displayMetrics.density
+        fun dp(v: Int) = (v * density).toInt()
+
+        for (dev in PairingSession.devices.values) {
+            val card = MaterialCardView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { topMargin = dp(10) }
+            }
+            val inner = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(dp(14), dp(14), dp(14), dp(14))
+            }
+            inner.addView(TextView(this).apply {
+                text = dev.name
+                setTextAppearance(
+                    com.google.android.material.R.style.TextAppearance_Material3_TitleSmall
+                )
+                setTextColor(getColor(R.color.text_primary))
+            })
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { topMargin = dp(8) }
+            }
+            row.addView(MaterialButton(this).apply {
+                setText(R.string.dev_share_to)
+                isFocusable = true
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                setOnClickListener { connectTo(dev, "publisher") }
+            })
+            row.addView(MaterialButton(this).apply {
+                setText(R.string.dev_watch)
+                isFocusable = true
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                    .apply { marginStart = dp(8) }
+                setOnClickListener { connectTo(dev, "viewer") }
+            })
+            inner.addView(row)
+            card.addView(inner)
+            binding.nearbyContainer.addView(card)
+        }
+    }
+
+    /** Karttan baglanti: hedef cihazin gomulu signaling'ine, sabit "local" odasi */
+    private fun connectTo(dev: NearbyDevice, role: String) {
+        launchTo(dev.host, dev.port, PAIR_ROOM, role)
+    }
+
+    /** Uzak cihaz bizim sunucumuza join oldu -> karsi rolu ustlen (127.0.0.1) */
+    private fun handleInvite(remoteRole: String) {
+        val myRole = if (remoteRole == "publisher") "viewer" else "publisher"
+        launchTo("127.0.0.1", PairingSession.port, PAIR_ROOM, myRole)
+    }
+
+    private fun launchTo(host: String, port: Int, room: String, role: String) {
+        val target = if (role == "publisher") PublisherActivity::class.java else ViewerActivity::class.java
+        startActivity(Intent(this, target).apply {
+            putExtra(EXTRA_ROOM, room)
+            putExtra(EXTRA_HOST, host)
+            putExtra(EXTRA_PORT, port)
+            putExtra(EXTRA_AUDIO, role == "publisher" && binding.audioSwitch.isChecked)
+        })
+    }
+
+    private fun localIpAddress(): String? = try {
+        NetworkInterface.getNetworkInterfaces().toList()
+            .flatMap { it.inetAddresses.toList() }
+            .firstOrNull { !it.isLoopbackAddress && it is Inet4Address && it.isSiteLocalAddress }
+            ?.hostAddress
+    } catch (e: Exception) {
+        null
     }
 
     private fun restoreState() {
