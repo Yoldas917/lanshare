@@ -150,7 +150,17 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
         surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", eglBase.eglBaseContext)
         capturer.initialize(surfaceTextureHelper, applicationContext, source.capturerObserver)
         capturer.startCapture(VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_FPS)
-        source.adaptOutputFormat(VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_FPS)
+        // NOT: adaptOutputFormat KALDIRILDI — VideoAdapter'in fps sinirlayicisi,
+        // jitter'li capture zaman damgalarinda 60fps girisi ~30'a dusurebiliyordu.
+        // Ekran yakalama zaten istenen boyutta uretir; ek sinirlayiciya gerek yok.
+
+        // Panel tazeleme hizini logla: 60Hz altiysa kaynak 60fps uretemez
+        val refresh = windowManager.defaultDisplay.refreshRate
+        if (refresh < (VIDEO_FPS - 1)) {
+            Log.w(TAG, "[fps] panel ${refresh}Hz -> capture capped at ${refresh.toInt()} by source")
+        } else {
+            Log.d(TAG, "[fps] panel refresh: ${refresh}Hz (hedef $VIDEO_FPS fps icin yeterli)")
+        }
 
         val track = session.factory.createVideoTrack("video0", source)
         videoTrack = track
@@ -167,7 +177,8 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
                 enc.maxBitrateBps = VIDEO_MAX_BITRATE_BPS
                 enc.minBitrateBps = VIDEO_MIN_BITRATE_BPS
                 enc.maxFramerate = VIDEO_FPS
-                enc.scaleResolutionDownBy = 1.0
+                // scaleResolutionDownBy sabitlemesi KALDIRILDI: MAINTAIN_FRAMERATE'in
+                // gerektiginde cozunurluk dusurerek 60fps'i korumasina alan birak
             }
             // 60fps sabit kalsin: kisitlanirsa cozunurlukten fedakarlik et
             params.degradationPreference = RtpParameters.DegradationPreference.MAINTAIN_FRAMERATE
@@ -175,6 +186,9 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
             Log.d(TAG, "Sender: maxBitrate=$VIDEO_MAX_BITRATE_BPS min=$VIDEO_MIN_BITRATE_BPS " +
                 "fps=$VIDEO_FPS degradation=MAINTAIN_FRAMERATE")
         }
+
+        // fps zinciri teshis loggeri: capture fps + encoder fps + kisit nedeni (1 sn)
+        startFpsDiagnostics(capturer)
 
         // Codec tercihini transceiver'a uygula (H264/HEVC one)
         session.applyVideoCodecPreferences(preferHevc)
@@ -205,13 +219,57 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
         internalAudio = capture
         session.internalAudioCapture = capture
 
+        // KRITIK: mic'i sustur. ADM mic orneklerini sifirlar, AudioBufferCallback
+        // sifirlanmis buffer'in YERINE ic ses PCM'ini yazar. Mic asla gonderilmez.
+        session.muteMicrophone(true)
+        Log.i(TAG, "audio source = INTERNAL_PLAYBACK (mic muted)")
+
         val aSource = session.factory.createAudioSource(MediaConstraints())
         val aTrack = session.factory.createAudioTrack("audio0", aSource)
         audioSource = aSource
         audioTrack = aTrack
         pc?.addTrack(aTrack, listOf("stream0"))
         Log.d(TAG, "Ic ses track eklendi")
-        status("Ic ses paylasimi aktif")
+        status("Ic ses paylasimi aktif (mic kapali)")
+    }
+
+    // --- fps zinciri teshisi: capture fps / encode fps / kisit nedeni ---
+    private var lastCapturedFrames = 0L
+    private var lastFramesEncoded = 0L
+    private var lastFramesSent = 0L
+    private var fpsCapturerRef: ScreenCapturerAndroid? = null
+    private val fpsDiagRunnable = object : Runnable {
+        override fun run() {
+            val cap = fpsCapturerRef ?: return
+            val captured = cap.numCapturedFrames
+            val capFps = captured - lastCapturedFrames
+            lastCapturedFrames = captured
+
+            session.pollOutboundVideoStats { s ->
+                if (s != null) {
+                    val encDelta = s.framesEncoded - lastFramesEncoded
+                    val sentDelta = s.framesSent - lastFramesSent
+                    lastFramesEncoded = s.framesEncoded
+                    lastFramesSent = s.framesSent
+                    Log.d(TAG, "[fps] capture=$capFps encode=$encDelta sent=$sentDelta " +
+                        "statsFps=${s.fps} ${s.width}x${s.height} " +
+                        "limit=${s.qualityLimitation} enc=${s.encoderImpl}")
+                    if (capFps in 1..(VIDEO_FPS - 15)) {
+                        Log.w(TAG, "[fps] capture ~$capFps: kaynak $VIDEO_FPS uretmiyor " +
+                            "(statik ekran veya panel siniri olabilir)")
+                    }
+                } else {
+                    Log.d(TAG, "[fps] capture=$capFps (henuz baglanti yok)")
+                }
+            }
+            mainHandler.postDelayed(this, 1000)
+        }
+    }
+
+    private fun startFpsDiagnostics(capturer: ScreenCapturerAndroid) {
+        fpsCapturerRef = capturer
+        lastCapturedFrames = 0
+        mainHandler.postDelayed(fpsDiagRunnable, 1000)
     }
 
     /**
@@ -324,6 +382,8 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
 
     override fun onDestroy() {
         super.onDestroy()
+        mainHandler.removeCallbacks(fpsDiagRunnable)
+        fpsCapturerRef = null
         try {
             screenCapturer?.stopCapture()
         } catch (_: Exception) {

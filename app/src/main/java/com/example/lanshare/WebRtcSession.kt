@@ -18,7 +18,6 @@ import org.webrtc.RtpTransceiver
 import org.webrtc.SdpObserver
 import org.webrtc.SessionDescription
 import org.webrtc.VideoTrack
-import org.webrtc.audio.AudioRecordDataCallback
 import org.webrtc.audio.JavaAudioDeviceModule
 import java.nio.ByteBuffer
 
@@ -66,19 +65,25 @@ class WebRtcSession(
         )
         val decoderFactory = DefaultVideoDecoderFactory(eglBase.eglBaseContext)
 
-        // Ozel ADM: kayit callback'inde (varsa) ic ses PCM'ini enjekte ederiz.
+        // Ozel ADM: AudioBufferCallback, AudioRecordThread'de mic verisi native'e
+        // gitmeden ONCE cagrilir (mute sonrasi). internalAudioCapture atanmissa
+        // buffer'i tamamen ic ses PCM'i ile DEGISTIRIR (mic'e eklenmez). Mic ayrica
+        // muteMicrophone(true) ile sifirlanir -> mic asla gitmez.
         // Giris 48kHz mono -> InternalAudioCapture ile ayni format.
         audioDeviceModule = JavaAudioDeviceModule.builder(context.applicationContext)
             .setInputSampleRate(AUDIO_SAMPLE_RATE)
             .setUseStereoInput(false)
-            .setAudioRecordDataCallback(object : AudioRecordDataCallback {
-                override fun onAudioDataRecorded(
+            .setAudioBufferCallback(object : JavaAudioDeviceModule.AudioBufferCallback {
+                override fun onBuffer(
+                    buffer: ByteBuffer,
                     audioFormat: Int,
                     channelCount: Int,
                     sampleRate: Int,
-                    audioBuffer: ByteBuffer
-                ) {
-                    internalAudioCapture?.fill(audioBuffer)
+                    bytesRead: Int,
+                    captureTimeNs: Long
+                ): Long {
+                    internalAudioCapture?.fill(buffer)
+                    return captureTimeNs
                 }
             })
             .createAudioDeviceModule()
@@ -145,6 +150,16 @@ class WebRtcSession(
     fun peerConnection(): PeerConnection? = peerConnection
 
     /**
+     * Mikrofonu susturur: ADM kayit thread'i mic orneklerini sifirlar; ardindan
+     * AudioBufferCallback (varsa) ic ses PCM'ini yazar. Ic ses paylasiminda
+     * mic'in ASLA gitmemesini garanti eder.
+     */
+    fun muteMicrophone(mute: Boolean) {
+        audioDeviceModule.setMicrophoneMute(mute)
+        Log.d(TAG, "microphone mute = $mute")
+    }
+
+    /**
      * Video transceiver'da codec sirasini ayarlar: birincil codec (H264 veya
      * HEVC) en one alinir. Desteklenen tum codec'ler loglanir. addTrack'ten
      * SONRA cagrilmali (transceiver olusmus olmali).
@@ -191,6 +206,43 @@ class WebRtcSession(
         val timestampUs: Double,
         val codec: String?
     )
+
+    data class OutboundVideoStats(
+        val fps: Double,               // encoder cikisi (framesPerSecond)
+        val framesEncoded: Long,
+        val framesSent: Long,
+        val qualityLimitation: String?, // none / cpu / bandwidth / other
+        val encoderImpl: String?,
+        val width: Int,
+        val height: Int,
+        val timestampUs: Double
+    )
+
+    /** Giden (outbound) video istatistikleri — fps zinciri teshisi icin. */
+    fun pollOutboundVideoStats(cb: (OutboundVideoStats?) -> Unit) {
+        val pc = peerConnection
+        if (pc == null) { cb(null); return }
+        pc.getStats { report ->
+            var result: OutboundVideoStats? = null
+            for (st in report.statsMap.values) {
+                val kind = st.members["kind"] ?: st.members["mediaType"]
+                if (st.type == "outbound-rtp" && kind == "video") {
+                    val m = st.members
+                    result = OutboundVideoStats(
+                        fps = (m["framesPerSecond"] as? Number)?.toDouble() ?: 0.0,
+                        framesEncoded = (m["framesEncoded"] as? Number)?.toLong() ?: 0L,
+                        framesSent = (m["framesSent"] as? Number)?.toLong() ?: 0L,
+                        qualityLimitation = m["qualityLimitationReason"] as? String,
+                        encoderImpl = m["encoderImplementation"] as? String,
+                        width = (m["frameWidth"] as? Number)?.toInt() ?: 0,
+                        height = (m["frameHeight"] as? Number)?.toInt() ?: 0,
+                        timestampUs = report.timestampUs
+                    )
+                }
+            }
+            cb(result)
+        }
+    }
 
     /** Gelen (inbound) video istatistiklerini okur; callback WebRTC thread'inde calisir. */
     fun pollInboundVideoStats(cb: (VideoStats?) -> Unit) {

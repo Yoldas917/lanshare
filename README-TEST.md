@@ -4,6 +4,36 @@ Bu uygulama tek APK'dır: açılışta **YAYINCI** veya **İZLEYİCİ** seçilir
 signaling `IP:PORT` girilir. Hedef: **1080p @ 60fps**, donanım **H.264** (gerekirse HEVC
 fallback), ~12 Mbps, WebRTC.
 
+## Bug-fix oturumu (ses + fps) — hızlı test
+
+**Kütüphane değişti:** getstream 1.3.8 → `io.github.webrtc-sdk:android:125.6422.07`
+(getstream'in iç-ses callback'i bağlanmamış ölü API'ydi; mic bu yüzden gidiyordu).
+**Rollback:** `git reset --hard d979b41` + `backup/app-debug-faz7-getstream-CALISAN.apk`.
+
+```bash
+# Kurulum (senin cihazlar):
+adb -s B6SOZ9KVFMH6MJPZ install -r ~/android/app/build/outputs/apk/debug/app-debug.apk
+adb connect 192.168.1.180:42619
+adb -s 192.168.1.180:42619 install -r ~/android/app/build/outputs/apk/debug/app-debug.apk
+adb -s 192.168.1.180:42619 shell am start -n com.example.lanshare/.MainActivity
+```
+
+**Test sırası (önce regresyon!):**
+1. **VIDEO regresyon:** ses toggle KAPALI → görüntü TV'ye geliyor mu? (kütüphane
+   değişimi videoyu bozmamalı). Bozulursa rollback yukarıda.
+2. **Ses:** toggle AÇIK → telefonda sesli video oynat → TV'den VİDEONUN sesi gelmeli;
+   telefona konuş → TV'den mikrofon DUYULMAMALI. Logda: `audio source = INTERNAL_PLAYBACK (mic muted)`.
+3. **FPS:** 60fps'lik hareketli içerik → TV overlay ~60fps olmalı. Yayıncı logunda her sn:
+   `[fps] capture=NN encode=NN sent=NN ... limit=none enc=c2.qti...`
+   - `capture` düşükse → kaynak üretmiyor (statik ekran/panel: `panel ...Hz` loguna bak)
+   - `capture=60, encode=30` → encoder halkası; `limit=cpu` ise donanım sınırı
+   - `limit=bandwidth` → BWE kısıyor (LAN'da olmamalı)
+
+```bash
+adb -s B6SOZ9KVFMH6MJPZ logcat -s LANSHARE:V      # yayıncı: fps zinciri + ses logu
+adb -s 192.168.1.180:42619 logcat -s LANSHARE:V   # izleyici: ICE + stats
+```
+
 ## Faz 7 yenilikleri
 - **Opsiyonel ses:** Ana ekranda **"Sesi de paylaş"** anahtarı (varsayılan kapalı). Açıkken
   yayıncı cihazın **iç sesini** (AudioPlaybackCapture) WebRTC audio track olarak gönderir;

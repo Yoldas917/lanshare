@@ -37,8 +37,11 @@ android {
 }
 
 dependencies {
-    // WebRTC (bakimli fork; paket adi hala org.webrtc, donanim H264 destekli)
-    implementation("io.getstream:stream-webrtc-android:1.3.8")
+    // WebRTC (LiveKit fork, libwebrtc m125; paket adi org.webrtc, donanim H264 destekli)
+    // NOT: getstream 1.3.8'den gecildi cunku onun setAudioRecordDataCallback API'si
+    // bagli degildi (ic ses enjeksiyonu calismiyordu). Bu fork'ta AudioBufferCallback
+    // gercekten AudioRecordThread icinde cagriliyor (bytecode dogrulandi).
+    implementation("io.github.webrtc-sdk:android:125.6422.07")
     // Signaling icin WebSocket istemcisi
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
