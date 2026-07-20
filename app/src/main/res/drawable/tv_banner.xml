@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <!-- Arka plan -->
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M0,0 h320 v180 h-320 z" />
+    <!-- Monitor -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M120,60 h80 a6,6 0 0 1 6,6 v42 a6,6 0 0 1 -6,6 h-80 a6,6 0 0 1 -6,-6 v-42 a6,6 0 0 1 6,-6 z" />
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M122,68 h76 v38 h-76 z" />
+    <!-- Play ucgeni -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M150,76 L176,87 L150,98 z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M148,120 h24 v6 h-24 z" />
+</vector>
