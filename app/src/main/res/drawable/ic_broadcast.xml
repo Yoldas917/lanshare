@@ -1,0 +1,15 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/blue_primary">
+    <!-- Telefon govdesi -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M8,2 h8 a2,2 0 0 1 2,2 v16 a2,2 0 0 1 -2,2 h-8 a2,2 0 0 1 -2,-2 v-16 a2,2 0 0 1 2,-2 z m0,3 v13 h8 v-13 z" />
+    <!-- Yayin dalgalari (sag ust) -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M13,9 L17,11.5 L13,14 z" />
+</vector>

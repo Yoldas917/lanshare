@@ -1,3 +1,86 @@
 <resources>
-    <string name="app_name">LAN Ekran Paylasimi</string>
+    <string name="app_name">LAN Screen Share</string>
+    <string name="main_subtitle">Low-latency screen sharing between devices on the same network</string>
+
+    <!-- Role cards -->
+    <string name="role_publisher_title">Broadcast</string>
+    <string name="role_publisher_desc">Share this device\'s screen</string>
+    <string name="role_viewer_title">Watch</string>
+    <string name="role_viewer_desc">Show a shared screen on this device</string>
+
+    <!-- Inputs -->
+    <string name="input_room_label">Room name</string>
+    <string name="input_server_label">Server (IP:PORT)</string>
+    <string name="err_fields_required">Room name and server address are required</string>
+    <string name="err_server_format">Server format must be IP:PORT</string>
+
+    <!-- Audio -->
+    <string name="share_audio_title">Share audio too</string>
+    <string name="share_audio_note">Device media sound (broadcast only). Protected apps may stay silent.</string>
+
+    <!-- Quality / fps -->
+    <string name="quality_label">Quality</string>
+    <string name="quality_smooth">Smooth · 720p</string>
+    <string name="quality_mid" translatable="false">1600×900</string>
+    <string name="quality_sharp">Sharp · 1080p</string>
+    <string name="fps_label">Frame rate</string>
+
+    <!-- Advanced -->
+    <string name="advanced_label">Advanced</string>
+    <string name="bitrate_label">Bitrate</string>
+    <string name="bitrate_auto">Auto</string>
+
+    <!-- Language -->
+    <string name="language_label">Language</string>
+    <string name="lang_system">System</string>
+    <string name="lang_tr" translatable="false">Türkçe</string>
+    <string name="lang_en" translatable="false">English</string>
+    <string name="lang_ar" translatable="false">العربية</string>
+    <string name="lang_es" translatable="false">Español</string>
+    <string name="lang_de" translatable="false">Deutsch</string>
+
+    <!-- Help -->
+    <string name="help_card_title">How to use?</string>
+    <string name="help_card_desc">Setup and pairing in 5 steps</string>
+    <string name="help_title">How to use</string>
+    <string name="help_s1_title">1. Same network</string>
+    <string name="help_s1_body">Both devices (broadcaster and viewer) must be connected to the same Wi-Fi / modem. Screen sharing does not work over the internet; everything stays on your local network.</string>
+    <string name="help_s2_title">2. Server address</string>
+    <string name="help_s2_body">A small signaling server runs on your computer. Enter its address as IP:PORT (e.g. 192.168.1.165:8080) on both devices. You can find the IP in your computer\'s network settings.</string>
+    <string name="help_s3_title">3. Same room name</string>
+    <string name="help_s3_body">Devices find each other by room name. Type the same room name (e.g. \"demo\") on both devices. One taps Broadcast, the other taps Watch.</string>
+    <string name="help_s4_title">4. Audio and quality</string>
+    <string name="help_s4_body">\"Share audio too\" sends the device\'s media sound along with the screen. Quality and frame-rate settings let you trade sharpness for smoothness: 720p · 60 fps is the smoothest choice on most devices; 1080p is sharper but heavier.</string>
+    <string name="help_s5_title">5. Protected content</string>
+    <string name="help_s5_body">Only unprotected content can be shared. DRM-protected apps (Netflix etc.) will appear as a black screen and their audio may stay silent — this is normal and by design.</string>
+
+    <!-- Publisher screen -->
+    <string name="pub_screen_title">BROADCAST</string>
+    <string name="st_starting">Starting…</string>
+    <string name="st_perm_request">Requesting screen capture permission…</string>
+    <string name="st_perm_granted">Permission granted, starting service…</string>
+    <string name="st_perm_denied">Screen capture permission DENIED</string>
+    <string name="st_fgs_timeout">Service did not become ready (4 s) — check notification permission</string>
+    <string name="st_capture_start">Capturing %1$dx%2$d @ %3$d fps (%4$s)</string>
+    <string name="st_connecting">Connecting: %1$s (room %2$s)</string>
+    <string name="st_audio_active">Internal audio sharing active (mic off)</string>
+    <string name="st_audio_failed">Could not start internal audio — video only</string>
+    <string name="st_no_projection">No MediaProjection for audio — video only</string>
+    <string name="st_mic_denied">No audio permission — audio sharing disabled, video only</string>
+    <string name="st_joined">Joined room. Other peers: %1$d</string>
+    <string name="st_viewer_joined">Viewer joined — sending offer</string>
+    <string name="st_viewer_left">Viewer left</string>
+    <string name="st_offer_sent">Offer sent, waiting for answer…</string>
+    <string name="st_answer_received">Answer received</string>
+    <string name="st_ice">ICE: %1$s</string>
+    <string name="st_pc">Connection: %1$s</string>
+    <string name="st_error">ERROR: %1$s</string>
+    <string name="st_sig_closed">Signaling closed</string>
+
+    <!-- Viewer screen -->
+    <string name="vst_pub_ready">Broadcaster ready, waiting for offer…</string>
+    <string name="vst_pub_left">Broadcaster left</string>
+    <string name="vst_offer_received">Offer received — creating answer</string>
+    <string name="vst_answer_sent">Answer sent</string>
+    <string name="vst_video_connected">Video connected — rendering</string>
 </resources>

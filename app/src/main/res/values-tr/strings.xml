@@ -1,0 +1,71 @@
+<resources>
+    <string name="app_name">LAN Ekran Paylaşımı</string>
+    <string name="main_subtitle">Aynı ağdaki cihazlar arasında düşük gecikmeli ekran paylaşımı</string>
+
+    <string name="role_publisher_title">Yayınla</string>
+    <string name="role_publisher_desc">Bu cihazın ekranını paylaş</string>
+    <string name="role_viewer_title">İzle</string>
+    <string name="role_viewer_desc">Paylaşılan ekranı bu cihazda göster</string>
+
+    <string name="input_room_label">Oda adı</string>
+    <string name="input_server_label">Sunucu (IP:PORT)</string>
+    <string name="err_fields_required">Oda adı ve sunucu adresi gerekli</string>
+    <string name="err_server_format">Sunucu formatı IP:PORT olmalı</string>
+
+    <string name="share_audio_title">Sesi de paylaş</string>
+    <string name="share_audio_note">Cihazın medya sesi (yalnızca yayında). Korumalı uygulamalar sessiz kalabilir.</string>
+
+    <string name="quality_label">Kalite</string>
+    <string name="quality_smooth">Akıcı · 720p</string>
+    <string name="quality_sharp">Net · 1080p</string>
+    <string name="fps_label">Kare hızı</string>
+
+    <string name="advanced_label">Gelişmiş</string>
+    <string name="bitrate_label">Bit hızı</string>
+    <string name="bitrate_auto">Otomatik</string>
+
+    <string name="language_label">Dil</string>
+    <string name="lang_system">Sistem</string>
+
+    <string name="help_card_title">Nasıl kullanılır?</string>
+    <string name="help_card_desc">5 adımda kurulum ve eşleşme</string>
+    <string name="help_title">Nasıl kullanılır</string>
+    <string name="help_s1_title">1. Aynı ağ</string>
+    <string name="help_s1_body">İki cihaz da (yayıncı ve izleyici) aynı Wi-Fi\'ye / modeme bağlı olmalı. Paylaşım internet üzerinden çalışmaz; her şey yerel ağınızda kalır.</string>
+    <string name="help_s2_title">2. Sunucu adresi</string>
+    <string name="help_s2_body">Bilgisayarınızda küçük bir sinyalleşme sunucusu çalışır. Adresini iki cihazda da IP:PORT biçiminde girin (örn. 192.168.1.165:8080). IP\'yi bilgisayarınızın ağ ayarlarından bulabilirsiniz.</string>
+    <string name="help_s3_title">3. Aynı oda adı</string>
+    <string name="help_s3_body">Cihazlar birbirini oda adıyla bulur. İki cihazda da aynı oda adını yazın (örn. \"demo\"). Biri Yayınla\'ya, diğeri İzle\'ye dokunsun.</string>
+    <string name="help_s4_title">4. Ses ve kalite</string>
+    <string name="help_s4_body">\"Sesi de paylaş\" ekranla birlikte cihazın medya sesini gönderir. Kalite ve kare hızı ayarlarıyla netlik–akıcılık dengesini siz seçersiniz: çoğu cihazda en akıcı seçim 720p · 60 fps\'tir; 1080p daha net ama daha ağırdır.</string>
+    <string name="help_s5_title">5. Korumalı içerik</string>
+    <string name="help_s5_body">Yalnızca korumasız içerik paylaşılabilir. DRM korumalı uygulamalar (Netflix vb.) siyah ekran olarak görünür, sesleri de gelmeyebilir — bu normaldir ve tasarım gereğidir.</string>
+
+    <string name="pub_screen_title">YAYIN</string>
+    <string name="st_starting">Başlatılıyor…</string>
+    <string name="st_perm_request">Ekran yakalama izni isteniyor…</string>
+    <string name="st_perm_granted">İzin verildi, servis başlatılıyor…</string>
+    <string name="st_perm_denied">Ekran yakalama izni REDDEDİLDİ</string>
+    <string name="st_fgs_timeout">Servis hazır olmadı (4 sn) — bildirim iznini kontrol edin</string>
+    <string name="st_capture_start">Yakalama: %1$dx%2$d @ %3$d fps (%4$s)</string>
+    <string name="st_connecting">Bağlanılıyor: %1$s (oda %2$s)</string>
+    <string name="st_audio_active">İç ses paylaşımı etkin (mikrofon kapalı)</string>
+    <string name="st_audio_failed">İç ses başlatılamadı — yalnızca video</string>
+    <string name="st_no_projection">Ses için MediaProjection alınamadı — yalnızca video</string>
+    <string name="st_mic_denied">Ses izni yok — ses paylaşımı kapatıldı, yalnızca video</string>
+    <string name="st_joined">Odaya katıldım. Odadaki diğer katılımcı: %1$d</string>
+    <string name="st_viewer_joined">İzleyici katıldı — offer gönderiliyor</string>
+    <string name="st_viewer_left">İzleyici ayrıldı</string>
+    <string name="st_offer_sent">Offer gönderildi, answer bekleniyor…</string>
+    <string name="st_answer_received">Answer alındı</string>
+    <string name="st_ice">ICE: %1$s</string>
+    <string name="st_pc">Bağlantı: %1$s</string>
+    <string name="st_error">HATA: %1$s</string>
+    <string name="st_sig_closed">Sinyalleşme kapandı</string>
+
+    <string name="vst_pub_ready">Yayıncı hazır, offer bekleniyor…</string>
+    <string name="vst_pub_left">Yayıncı ayrıldı</string>
+    <string name="vst_offer_received">Offer alındı — answer üretiliyor</string>
+    <string name="vst_answer_sent">Answer gönderildi</string>
+    <string name="vst_video_connected">Görüntü bağlandı — oynatılıyor</string>
+</resources>

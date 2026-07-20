@@ -1,0 +1,71 @@
+<resources>
+    <string name="app_name">Compartir Pantalla LAN</string>
+    <string name="main_subtitle">Compartición de pantalla de baja latencia entre dispositivos de la misma red</string>
+
+    <string name="role_publisher_title">Emitir</string>
+    <string name="role_publisher_desc">Comparte la pantalla de este dispositivo</string>
+    <string name="role_viewer_title">Ver</string>
+    <string name="role_viewer_desc">Muestra la pantalla compartida en este dispositivo</string>
+
+    <string name="input_room_label">Nombre de la sala</string>
+    <string name="input_server_label">Servidor (IP:PORT)</string>
+    <string name="err_fields_required">Se requieren el nombre de la sala y la dirección del servidor</string>
+    <string name="err_server_format">El formato del servidor debe ser IP:PORT</string>
+
+    <string name="share_audio_title">Compartir también el audio</string>
+    <string name="share_audio_note">Sonido multimedia del dispositivo (solo al emitir). Las apps protegidas pueden quedar en silencio.</string>
+
+    <string name="quality_label">Calidad</string>
+    <string name="quality_smooth">Fluido · 720p</string>
+    <string name="quality_sharp">Nítido · 1080p</string>
+    <string name="fps_label">Fotogramas por segundo</string>
+
+    <string name="advanced_label">Avanzado</string>
+    <string name="bitrate_label">Tasa de bits</string>
+    <string name="bitrate_auto">Automática</string>
+
+    <string name="language_label">Idioma</string>
+    <string name="lang_system">Sistema</string>
+
+    <string name="help_card_title">¿Cómo se usa?</string>
+    <string name="help_card_desc">Configuración y emparejamiento en 5 pasos</string>
+    <string name="help_title">Cómo se usa</string>
+    <string name="help_s1_title">1. La misma red</string>
+    <string name="help_s1_body">Ambos dispositivos (emisor y espectador) deben estar conectados al mismo Wi-Fi / módem. La compartición no funciona por internet; todo se queda en tu red local.</string>
+    <string name="help_s2_title">2. Dirección del servidor</string>
+    <string name="help_s2_body">En tu ordenador se ejecuta un pequeño servidor de señalización. Introduce su dirección como IP:PORT (p. ej. 192.168.1.165:8080) en ambos dispositivos. Encontrarás la IP en la configuración de red de tu ordenador.</string>
+    <string name="help_s3_title">3. El mismo nombre de sala</string>
+    <string name="help_s3_body">Los dispositivos se encuentran por el nombre de la sala. Escribe el mismo nombre (p. ej. \"demo\") en ambos. Uno pulsa Emitir y el otro pulsa Ver.</string>
+    <string name="help_s4_title">4. Audio y calidad</string>
+    <string name="help_s4_body">\"Compartir también el audio\" envía el sonido multimedia junto con la pantalla. Con los ajustes de calidad y fotogramas eliges entre nitidez y fluidez: 720p · 60 fps es la opción más fluida en la mayoría de dispositivos; 1080p es más nítido pero más exigente.</string>
+    <string name="help_s5_title">5. Contenido protegido</string>
+    <string name="help_s5_body">Solo se puede compartir contenido sin protección. Las apps con DRM (Netflix, etc.) se verán como una pantalla negra y su sonido puede no llegar — es normal y es intencionado.</string>
+
+    <string name="pub_screen_title">EMISIÓN</string>
+    <string name="st_starting">Iniciando…</string>
+    <string name="st_perm_request">Solicitando permiso de captura de pantalla…</string>
+    <string name="st_perm_granted">Permiso concedido, iniciando servicio…</string>
+    <string name="st_perm_denied">Permiso de captura de pantalla DENEGADO</string>
+    <string name="st_fgs_timeout">El servicio no quedó listo (4 s) — comprueba el permiso de notificaciones</string>
+    <string name="st_capture_start">Capturando %1$dx%2$d @ %3$d fps (%4$s)</string>
+    <string name="st_connecting">Conectando: %1$s (sala %2$s)</string>
+    <string name="st_audio_active">Compartición de audio interno activa (micrófono apagado)</string>
+    <string name="st_audio_failed">No se pudo iniciar el audio interno — solo vídeo</string>
+    <string name="st_no_projection">Sin MediaProjection para el audio — solo vídeo</string>
+    <string name="st_mic_denied">Sin permiso de audio — compartición de audio desactivada, solo vídeo</string>
+    <string name="st_joined">Unido a la sala. Otros participantes: %1$d</string>
+    <string name="st_viewer_joined">Espectador conectado — enviando oferta</string>
+    <string name="st_viewer_left">El espectador se fue</string>
+    <string name="st_offer_sent">Oferta enviada, esperando respuesta…</string>
+    <string name="st_answer_received">Respuesta recibida</string>
+    <string name="st_ice">ICE: %1$s</string>
+    <string name="st_pc">Conexión: %1$s</string>
+    <string name="st_error">ERROR: %1$s</string>
+    <string name="st_sig_closed">Señalización cerrada</string>
+
+    <string name="vst_pub_ready">Emisor listo, esperando oferta…</string>
+    <string name="vst_pub_left">El emisor se fue</string>
+    <string name="vst_offer_received">Oferta recibida — creando respuesta</string>
+    <string name="vst_answer_sent">Respuesta enviada</string>
+    <string name="vst_video_connected">Vídeo conectado — reproduciendo</string>
+</resources>

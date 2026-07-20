@@ -1,5 +1,46 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.LanShare" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.LanShare" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorOnPrimary">@color/surface_white</item>
+        <item name="colorPrimaryContainer">@color/blue_container</item>
+        <item name="colorOnPrimaryContainer">@color/blue_primary_dark</item>
+        <item name="colorSecondary">@color/blue_primary_dark</item>
+        <item name="colorOnSecondary">@color/surface_white</item>
+        <item name="colorSurface">@color/surface_white</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/stroke_subtle</item>
+        <item name="android:colorBackground">@color/bg_app</item>
+        <item name="android:statusBarColor">@color/bg_app</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/bg_app</item>
+        <!-- Yuvarlatilmis kose dili (16-20dp) -->
+        <item name="shapeAppearanceCornerMedium">@style/Shape.LanShare.Medium</item>
+        <item name="shapeAppearanceCornerLarge">@style/Shape.LanShare.Large</item>
+        <item name="materialCardViewStyle">@style/Card.LanShare</item>
+    </style>
+
+    <style name="Shape.LanShare.Medium" parent="ShapeAppearance.Material3.Corner.Medium">
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="Shape.LanShare.Large" parent="ShapeAppearance.Material3.Corner.Large">
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <!-- Karta TV odak cercevesi: focus'ta mavi, normalde ince gri -->
+    <style name="Card.LanShare" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/surface_white</item>
+        <item name="cardElevation">1dp</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="strokeColor">@color/card_stroke</item>
+        <item name="shapeAppearance">@style/Shape.LanShare.Medium</item>
+    </style>
+
+    <!-- Izleyici/koyu video ekranlari icin (siyah arkaplan dogru) -->
+    <style name="Theme.LanShare.Dark" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/blue_primary</item>
         <item name="android:statusBarColor">@android:color/black</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
     </style>
 </resources>

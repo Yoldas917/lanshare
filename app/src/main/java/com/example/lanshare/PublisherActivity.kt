@@ -54,6 +54,13 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
 
     private var preferHevc = false
 
+    // Kullanici ayarlarindan gelen yayin parametreleri (SettingsStore)
+    private var vw = VIDEO_WIDTH
+    private var vh = VIDEO_HEIGHT
+    private var vfps = VIDEO_FPS
+    private var vMaxBps = VIDEO_MAX_BITRATE_BPS
+    private var vMinBps = VIDEO_MIN_BITRATE_BPS
+
     private val mainHandler = Handler(Looper.getMainLooper())
     private lateinit var roomId: String
     private lateinit var host: String
@@ -64,7 +71,7 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK && result.data != null) {
-            status("Ekran yakalama izni verildi, FGS baslatiliyor...")
+            status(getString(R.string.st_perm_granted))
             val data = result.data!!
             // Android 14: MediaProjection olusturulmadan ONCE mediaProjection tipli
             // FGS AKTIF olmali. startForegroundService async'tir (Binder IPC ->
@@ -82,14 +89,14 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
                 .putExtra(EXTRA_WITH_MIC, withAudio)
             startForegroundService(svc)
         } else {
-            status("Ekran yakalama izni REDDEDILDI")
+            status(getString(R.string.st_perm_denied))
             Log.e(TAG, "MediaProjection izni reddedildi")
         }
     }
 
     private val fgsTimeoutRunnable = Runnable {
         ScreenCaptureService.readyListener = null
-        status("FGS hazir sinyali gelmedi (4 sn) — bildirim izni/battery kisitlarini kontrol et")
+        status(getString(R.string.st_fgs_timeout))
         Log.e(TAG, "FGS ready sinyali zaman asimi; startCapture cagrilmadi")
     }
 
@@ -99,7 +106,7 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
     ) { grants ->
         if (withAudio && grants[Manifest.permission.RECORD_AUDIO] == false) {
             withAudio = false
-            status("Mikrofon izni yok -> ses paylasimi kapatildi, yalnizca video")
+            status(getString(R.string.st_mic_denied))
         }
         requestScreenCapture()
     }
@@ -115,6 +122,15 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
         host = intent.getStringExtra(EXTRA_HOST) ?: "192.168.1.165"
         port = intent.getIntExtra(EXTRA_PORT, 8080)
         withAudio = intent.getBooleanExtra(EXTRA_AUDIO, false)
+
+        // Kullanicinin sectigi kalite/fps/bitrate
+        val settings = SettingsStore(this)
+        vw = settings.width
+        vh = settings.height
+        vfps = settings.fps
+        vMaxBps = settings.maxBitrateBps
+        vMinBps = settings.minBitrateBps
+        Log.d(TAG, "Ayarlar: ${vw}x$vh@$vfps, bitrate max=$vMaxBps min=$vMinBps")
 
         eglBase = EglBase.create()
         session = WebRtcSession(this, eglBase, sessionCallbacks)
@@ -142,18 +158,18 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
     }
 
     private fun requestScreenCapture() {
-        status("Ekran yakalama izni isteniyor...")
+        status(getString(R.string.st_perm_request))
         val mpm = getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         screenCaptureLauncher.launch(mpm.createScreenCaptureIntent())
     }
 
     private fun beginCapture(permissionData: Intent) {
-        // Codec karari: cihazin donanim H264 encoder'i 1080p60'i (Level ~4.2)
-        // destekliyor mu? Desteklemiyorsa HEVC'e dus (varsa). Kararı logla.
+        // Codec karari: cihazin donanim H264 encoder'i secilen formati
+        // destekliyor mu? Desteklemiyorsa HEVC'e dus (varsa). Karari logla.
         preferHevc = decidePreferHevc()
 
-        status("Ekran yakalama basliyor (${VIDEO_WIDTH}x$VIDEO_HEIGHT@$VIDEO_FPS, " +
-            "codec=${if (preferHevc) "HEVC" else "H264"})")
+        status(getString(R.string.st_capture_start, vw, vh, vfps,
+            if (preferHevc) "HEVC" else "H264"))
 
         val capturer = ScreenCapturerAndroid(permissionData, object : MediaProjection.Callback() {
             override fun onStop() {
@@ -167,17 +183,17 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
 
         surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", eglBase.eglBaseContext)
         capturer.initialize(surfaceTextureHelper, applicationContext, source.capturerObserver)
-        capturer.startCapture(VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_FPS)
+        capturer.startCapture(vw, vh, vfps)
         // NOT: adaptOutputFormat KALDIRILDI — VideoAdapter'in fps sinirlayicisi,
         // jitter'li capture zaman damgalarinda 60fps girisi ~30'a dusurebiliyordu.
         // Ekran yakalama zaten istenen boyutta uretir; ek sinirlayiciya gerek yok.
 
-        // Panel tazeleme hizini logla: 60Hz altiysa kaynak 60fps uretemez
+        // Panel tazeleme hizini logla: hedefin altindaysa kaynak o fps'i uretemez
         val refresh = windowManager.defaultDisplay.refreshRate
-        if (refresh < (VIDEO_FPS - 1)) {
+        if (refresh < (vfps - 1)) {
             Log.w(TAG, "[fps] panel ${refresh}Hz -> capture capped at ${refresh.toInt()} by source")
         } else {
-            Log.d(TAG, "[fps] panel refresh: ${refresh}Hz (hedef $VIDEO_FPS fps icin yeterli)")
+            Log.d(TAG, "[fps] panel refresh: ${refresh}Hz (hedef $vfps fps icin yeterli)")
         }
 
         val track = session.factory.createVideoTrack("video0", source)
@@ -192,17 +208,15 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
             val params = it.parameters
             if (params.encodings.isNotEmpty()) {
                 val enc = params.encodings[0]
-                enc.maxBitrateBps = VIDEO_MAX_BITRATE_BPS
-                enc.minBitrateBps = VIDEO_MIN_BITRATE_BPS
-                enc.maxFramerate = VIDEO_FPS
-                // scaleResolutionDownBy sabitlemesi KALDIRILDI: MAINTAIN_FRAMERATE'in
-                // gerektiginde cozunurluk dusurerek 60fps'i korumasina alan birak
+                enc.maxBitrateBps = vMaxBps
+                enc.minBitrateBps = vMinBps
+                enc.maxFramerate = vfps
             }
-            // 60fps sabit kalsin: kisitlanirsa cozunurlukten fedakarlik et
+            // Secilen fps sabit kalsin: kisitlanirsa cozunurlukten fedakarlik et
             params.degradationPreference = RtpParameters.DegradationPreference.MAINTAIN_FRAMERATE
             it.parameters = params
-            Log.d(TAG, "Sender: maxBitrate=$VIDEO_MAX_BITRATE_BPS min=$VIDEO_MIN_BITRATE_BPS " +
-                "fps=$VIDEO_FPS degradation=MAINTAIN_FRAMERATE")
+            Log.d(TAG, "Sender: maxBitrate=$vMaxBps min=$vMinBps " +
+                "fps=$vfps degradation=MAINTAIN_FRAMERATE")
         }
 
         // fps zinciri teshis loggeri: capture fps + encoder fps + kisit nedeni (1 sn)
@@ -219,19 +233,18 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
         // Signaling'e baglan
         signaling = SignalingClient(host, port, roomId, "publisher", this)
         signaling.connect()
-        status("Signaling'e baglaniliyor: ws://$host:$port (room=$roomId)" +
-            if (withAudio) " [ses acik]" else "")
+        status(getString(R.string.st_connecting, "ws://$host:$port", roomId))
     }
 
     private fun startInternalAudio(capturer: ScreenCapturerAndroid, pc: PeerConnection?) {
         val projection = capturer.mediaProjection
         if (projection == null) {
-            status("Ic ses icin MediaProjection alinamadi -> yalnizca video")
+            status(getString(R.string.st_no_projection))
             return
         }
         val capture = InternalAudioCapture(projection)
         if (!capture.start()) {
-            status("Ic ses baslatilamadi -> yalnizca video")
+            status(getString(R.string.st_audio_failed))
             return
         }
         internalAudio = capture
@@ -248,7 +261,7 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
         audioTrack = aTrack
         pc?.addTrack(aTrack, listOf("stream0"))
         Log.d(TAG, "Ic ses track eklendi")
-        status("Ic ses paylasimi aktif (mic kapali)")
+        status(getString(R.string.st_audio_active))
     }
 
     // --- fps zinciri teshisi: capture fps / encode fps / kisit nedeni ---
@@ -288,8 +301,8 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
                         Log.w(TAG, "[fps] YAZILIM encoder'a dusulmus: ${s.encoderImpl} — " +
                             "1080p60 icin donanim gerekli (HEVC fallback dusunulebilir)")
                     }
-                    if (capFps in 1..(VIDEO_FPS - 15)) {
-                        Log.w(TAG, "[fps] capture ~$capFps: kaynak $VIDEO_FPS uretmiyor " +
+                    if (capFps in 1..(vfps - 15)) {
+                        Log.w(TAG, "[fps] capture ~$capFps: kaynak $vfps uretmiyor " +
                             "(statik ekran veya panel siniri olabilir)")
                     }
                 } else {
@@ -311,13 +324,13 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
      * donanim encoder'i destekliyorsa HEVC tercih edilir. Karar loglanir.
      */
     private fun decidePreferHevc(): Boolean {
-        val h264 = hwEncoderSupports(MediaFormat.MIMETYPE_VIDEO_AVC, VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_FPS)
+        val h264 = hwEncoderSupports(MediaFormat.MIMETYPE_VIDEO_AVC, vw, vh, vfps)
         if (h264) {
-            Log.d(TAG, "H264 donanim encoder 1080p60 destekliyor -> H264")
+            Log.d(TAG, "H264 donanim encoder ${vw}x$vh@$vfps destekliyor -> H264")
             return false
         }
-        val hevc = hwEncoderSupports(MediaFormat.MIMETYPE_VIDEO_HEVC, VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_FPS)
-        Log.w(TAG, "H264 1080p60 desteklemiyor; HEVC destegi=$hevc -> " +
+        val hevc = hwEncoderSupports(MediaFormat.MIMETYPE_VIDEO_HEVC, vw, vh, vfps)
+        Log.w(TAG, "H264 ${vw}x$vh@$vfps desteklemiyor; HEVC destegi=$hevc -> " +
             if (hevc) "HEVC fallback" else "yine de H264 (en iyi caba)")
         return hevc
     }
@@ -344,7 +357,7 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
         session.createOffer { offer ->
             session.setLocalDescription(offer) {
                 signaling.sendOffer(offer)
-                status("Offer gonderildi, answer bekleniyor...")
+                status(getString(R.string.st_offer_sent))
             }
         }
     }
@@ -356,20 +369,17 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
         }
 
         override fun onIceConnectionChange(state: PeerConnection.IceConnectionState) {
-            status("ICE: $state")
+            status(getString(R.string.st_ice, state.toString()))
             if (state == PeerConnection.IceConnectionState.CONNECTED) {
                 // LAN: BWE'nin dusuk baslayip yavas tirmanmasini bekleme —
                 // hedef bitrate'e dogrudan kickstart et.
-                val ok = session.peerConnection()?.setBitrate(
-                    VIDEO_MIN_BITRATE_BPS, VIDEO_MAX_BITRATE_BPS, VIDEO_MAX_BITRATE_BPS
-                )
-                Log.d(TAG, "setBitrate kickstart (min=$VIDEO_MIN_BITRATE_BPS " +
-                    "cur/max=$VIDEO_MAX_BITRATE_BPS) -> $ok")
+                val ok = session.peerConnection()?.setBitrate(vMinBps, vMaxBps, vMaxBps)
+                Log.d(TAG, "setBitrate kickstart (min=$vMinBps cur/max=$vMaxBps) -> $ok")
             }
         }
 
         override fun onConnectionChange(state: PeerConnection.PeerConnectionState) {
-            status("PeerConnection: $state")
+            status(getString(R.string.st_pc, state.toString()))
         }
 
         override fun onRemoteVideoTrack(track: VideoTrack) {
@@ -381,18 +391,18 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
     override fun onOpen() {}
 
     override fun onJoined(peers: Int) {
-        status("Odaya katildim. Odadaki diger peer: $peers")
+        status(getString(R.string.st_joined, peers))
         // Zaten izleyici varsa hemen offer uret
         if (peers > 0) runOnUiThread { createAndSendOffer() }
     }
 
     override fun onPeerJoined(role: String?) {
-        status("Izleyici katildi (role=$role) -> offer uretiliyor")
+        status(getString(R.string.st_viewer_joined))
         runOnUiThread { createAndSendOffer() }
     }
 
     override fun onPeerLeft() {
-        status("Izleyici ayrildi")
+        status(getString(R.string.st_viewer_left))
     }
 
     override fun onRemoteOffer(sdp: SessionDescription) {
@@ -400,10 +410,8 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
     }
 
     override fun onRemoteAnswer(sdp: SessionDescription) {
-        status("Answer alindi")
-        session.setRemoteDescription(sdp) {
-            status("Baglanti kuruluyor...")
-        }
+        status(getString(R.string.st_answer_received))
+        session.setRemoteDescription(sdp) {}
     }
 
     override fun onRemoteIce(candidate: IceCandidate) {
@@ -411,11 +419,11 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
     }
 
     override fun onError(message: String) {
-        status("HATA: $message")
+        status(getString(R.string.st_error, message))
     }
 
     override fun onClosed() {
-        status("Signaling kapandi")
+        status(getString(R.string.st_sig_closed))
     }
 
     private fun status(msg: String) {

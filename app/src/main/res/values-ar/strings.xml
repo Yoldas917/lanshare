@@ -1,0 +1,71 @@
+<resources>
+    <string name="app_name">مشاركة الشاشة عبر الشبكة</string>
+    <string name="main_subtitle">مشاركة الشاشة بزمن استجابة منخفض بين الأجهزة على نفس الشبكة</string>
+
+    <string name="role_publisher_title">بثّ</string>
+    <string name="role_publisher_desc">شارك شاشة هذا الجهاز</string>
+    <string name="role_viewer_title">مشاهدة</string>
+    <string name="role_viewer_desc">اعرض الشاشة المُشارَكة على هذا الجهاز</string>
+
+    <string name="input_room_label">اسم الغرفة</string>
+    <string name="input_server_label">الخادم (IP:PORT)</string>
+    <string name="err_fields_required">اسم الغرفة وعنوان الخادم مطلوبان</string>
+    <string name="err_server_format">يجب أن يكون تنسيق الخادم IP:PORT</string>
+
+    <string name="share_audio_title">مشاركة الصوت أيضًا</string>
+    <string name="share_audio_note">صوت الوسائط للجهاز (أثناء البث فقط). قد تبقى التطبيقات المحمية صامتة.</string>
+
+    <string name="quality_label">الجودة</string>
+    <string name="quality_smooth">سلس · 720p</string>
+    <string name="quality_sharp">حادّ · 1080p</string>
+    <string name="fps_label">معدل الإطارات</string>
+
+    <string name="advanced_label">إعدادات متقدمة</string>
+    <string name="bitrate_label">معدل البت</string>
+    <string name="bitrate_auto">تلقائي</string>
+
+    <string name="language_label">اللغة</string>
+    <string name="lang_system">لغة النظام</string>
+
+    <string name="help_card_title">كيفية الاستخدام؟</string>
+    <string name="help_card_desc">الإعداد والاقتران في 5 خطوات</string>
+    <string name="help_title">كيفية الاستخدام</string>
+    <string name="help_s1_title">1. الشبكة نفسها</string>
+    <string name="help_s1_body">يجب أن يكون الجهازان (الباثّ والمشاهد) متصلين بنفس شبكة Wi-Fi / المودم. لا تعمل المشاركة عبر الإنترنت؛ كل شيء يبقى داخل شبكتك المحلية.</string>
+    <string name="help_s2_title">2. عنوان الخادم</string>
+    <string name="help_s2_body">يعمل خادم إشارات صغير على حاسوبك. أدخل عنوانه بصيغة IP:PORT (مثل 192.168.1.165:8080) على كلا الجهازين. يمكنك إيجاد عنوان IP في إعدادات الشبكة لحاسوبك.</string>
+    <string name="help_s3_title">3. اسم الغرفة نفسه</string>
+    <string name="help_s3_body">تجد الأجهزة بعضها عبر اسم الغرفة. اكتب اسم الغرفة نفسه (مثل \"demo\") على الجهازين. يضغط أحدهما على «بثّ» والآخر على «مشاهدة».</string>
+    <string name="help_s4_title">4. الصوت والجودة</string>
+    <string name="help_s4_body">خيار «مشاركة الصوت أيضًا» يرسل صوت الوسائط مع الشاشة. تتيح لك إعدادات الجودة ومعدل الإطارات الموازنة بين الحدّة والسلاسة: الخيار الأسلس على معظم الأجهزة هو 720p · 60 إطارًا؛ أما 1080p فأكثر حدّة لكنه أثقل.</string>
+    <string name="help_s5_title">5. المحتوى المحمي</string>
+    <string name="help_s5_body">يمكن مشاركة المحتوى غير المحمي فقط. التطبيقات المحمية بإدارة الحقوق الرقمية (مثل Netflix) ستظهر كشاشة سوداء وقد لا يصل صوتها — هذا أمر طبيعي ومقصود.</string>
+
+    <string name="pub_screen_title">البثّ</string>
+    <string name="st_starting">جارٍ البدء…</string>
+    <string name="st_perm_request">جارٍ طلب إذن التقاط الشاشة…</string>
+    <string name="st_perm_granted">تم منح الإذن، جارٍ بدء الخدمة…</string>
+    <string name="st_perm_denied">تم رفض إذن التقاط الشاشة</string>
+    <string name="st_fgs_timeout">لم تصبح الخدمة جاهزة (4 ث) — تحقق من إذن الإشعارات</string>
+    <string name="st_capture_start">الالتقاط: %1$dx%2$d @ %3$d إطار/ث (%4$s)</string>
+    <string name="st_connecting">جارٍ الاتصال: %1$s (الغرفة %2$s)</string>
+    <string name="st_audio_active">مشاركة الصوت الداخلي مفعّلة (الميكروفون مطفأ)</string>
+    <string name="st_audio_failed">تعذّر بدء الصوت الداخلي — فيديو فقط</string>
+    <string name="st_no_projection">تعذّر الحصول على MediaProjection للصوت — فيديو فقط</string>
+    <string name="st_mic_denied">لا يوجد إذن للصوت — أُلغيت مشاركة الصوت، فيديو فقط</string>
+    <string name="st_joined">انضممت إلى الغرفة. عدد المشاركين الآخرين: %1$d</string>
+    <string name="st_viewer_joined">انضم المشاهد — جارٍ إرسال العرض</string>
+    <string name="st_viewer_left">غادر المشاهد</string>
+    <string name="st_offer_sent">أُرسل العرض، بانتظار الرد…</string>
+    <string name="st_answer_received">وصل الرد</string>
+    <string name="st_ice">ICE: %1$s</string>
+    <string name="st_pc">الاتصال: %1$s</string>
+    <string name="st_error">خطأ: %1$s</string>
+    <string name="st_sig_closed">أُغلق اتصال الإشارات</string>
+
+    <string name="vst_pub_ready">الباثّ جاهز، بانتظار العرض…</string>
+    <string name="vst_pub_left">غادر الباثّ</string>
+    <string name="vst_offer_received">وصل العرض — جارٍ إنشاء الرد</string>
+    <string name="vst_answer_sent">أُرسل الرد</string>
+    <string name="vst_video_connected">اتصل الفيديو — جارٍ العرض</string>
+</resources>

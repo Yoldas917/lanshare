@@ -43,6 +43,8 @@ class ViewerActivity : AppCompatActivity(), SignalingClient.Listener {
         }
     }
 
+    private lateinit var settings: SettingsStore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityViewerBinding.inflate(layoutInflater)
@@ -50,6 +52,20 @@ class ViewerActivity : AppCompatActivity(), SignalingClient.Listener {
         // Izleme surerken TV ekrani uykuya/karartmaya gecmesin
         // (activity kapaninca flag otomatik kalkar; wakelock gerekmez)
         window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        settings = SettingsStore(this)
+        // Stats overlay: varsayilan kapali; dokunma veya TV kumandasi OK ile ac/kapa.
+        // Root view odaklanabilir -> D-pad center click olarak gelir.
+        binding.statsText.visibility =
+            if (settings.overlayVisible) android.view.View.VISIBLE else android.view.View.GONE
+        binding.root.isClickable = true
+        binding.root.isFocusable = true
+        binding.root.setOnClickListener {
+            val show = binding.statsText.visibility != android.view.View.VISIBLE
+            binding.statsText.visibility =
+                if (show) android.view.View.VISIBLE else android.view.View.GONE
+            settings.overlayVisible = show
+        }
 
         roomId = intent.getStringExtra(EXTRA_ROOM) ?: "demo"
         host = intent.getStringExtra(EXTRA_HOST) ?: "192.168.1.165"
@@ -66,10 +82,15 @@ class ViewerActivity : AppCompatActivity(), SignalingClient.Listener {
 
         signaling = SignalingClient(host, port, roomId, "viewer", this)
         signaling.connect()
-        status("Signaling'e baglaniliyor: ws://$host:$port (room=$roomId)")
+        status(getString(R.string.st_connecting, "ws://$host:$port", roomId))
 
         // Canli istatistik overlay'ini baslat
         mainHandler.postDelayed(statsPoller, 1500)
+    }
+
+    // Status metni 5 sn sonra otomatik gizlenir; yeni durumda tekrar gorunur
+    private val hideStatusRunnable = Runnable {
+        binding.statusText.visibility = android.view.View.GONE
     }
 
     private fun pollStats() {
@@ -105,11 +126,11 @@ class ViewerActivity : AppCompatActivity(), SignalingClient.Listener {
         }
 
         override fun onIceConnectionChange(state: PeerConnection.IceConnectionState) {
-            status("ICE: $state")
+            status(getString(R.string.st_ice, state.toString()))
         }
 
         override fun onConnectionChange(state: PeerConnection.PeerConnectionState) {
-            status("PeerConnection: $state")
+            status(getString(R.string.st_pc, state.toString()))
         }
 
         override fun onRemoteVideoTrack(track: VideoTrack) {
@@ -117,7 +138,7 @@ class ViewerActivity : AppCompatActivity(), SignalingClient.Listener {
                 if (!sinkAttached) {
                     track.addSink(binding.remoteView)
                     sinkAttached = true
-                    status("Remote video baglandi -> render ediliyor")
+                    status(getString(R.string.vst_video_connected))
                     Log.d(TAG, "[Viewer] remote video sink baglandi")
                 }
             }
@@ -128,24 +149,24 @@ class ViewerActivity : AppCompatActivity(), SignalingClient.Listener {
     override fun onOpen() {}
 
     override fun onJoined(peers: Int) {
-        status("Odaya katildim. Odadaki diger peer: $peers")
+        status(getString(R.string.st_joined, peers))
     }
 
     override fun onPeerJoined(role: String?) {
-        status("Yayinci hazir (role=$role), offer bekleniyor...")
+        status(getString(R.string.vst_pub_ready))
     }
 
     override fun onPeerLeft() {
-        status("Yayinci ayrildi")
+        status(getString(R.string.vst_pub_left))
     }
 
     override fun onRemoteOffer(sdp: SessionDescription) {
-        status("Offer alindi -> answer uretiliyor")
+        status(getString(R.string.vst_offer_received))
         session.setRemoteDescription(sdp) {
             session.createAnswer { answer ->
                 session.setLocalDescription(answer) {
                     signaling.sendAnswer(answer)
-                    status("Answer gonderildi")
+                    status(getString(R.string.vst_answer_sent))
                 }
             }
         }
@@ -160,20 +181,26 @@ class ViewerActivity : AppCompatActivity(), SignalingClient.Listener {
     }
 
     override fun onError(message: String) {
-        status("HATA: $message")
+        status(getString(R.string.st_error, message))
     }
 
     override fun onClosed() {
-        status("Signaling kapandi")
+        status(getString(R.string.st_sig_closed))
     }
 
     private fun status(msg: String) {
         Log.d(TAG, "[Viewer] $msg")
-        runOnUiThread { binding.statusText.text = msg }
+        runOnUiThread {
+            binding.statusText.text = msg
+            binding.statusText.visibility = android.view.View.VISIBLE
+            mainHandler.removeCallbacks(hideStatusRunnable)
+            mainHandler.postDelayed(hideStatusRunnable, 5000)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        mainHandler.removeCallbacks(hideStatusRunnable)
         mainHandler.removeCallbacks(statsPoller)
         if (::signaling.isInitialized) signaling.close()
         if (rendererInitialized) binding.remoteView.release()

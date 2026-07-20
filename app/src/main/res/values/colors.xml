@@ -1,3 +1,13 @@
 <resources>
+    <!-- Mavi-beyaz palet -->
+    <color name="blue_primary">#2563EB</color>
+    <color name="blue_primary_dark">#1D4ED8</color>
+    <color name="blue_container">#DBEAFE</color>
+    <color name="bg_app">#F5F8FF</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#334155</color>
+    <color name="stroke_subtle">#E2E8F0</color>
+
     <color name="ic_launcher_background">#1565C0</color>
 </resources>

@@ -1,0 +1,15 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/blue_primary">
+    <!-- TV govdesi -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M3,5 h18 a1.5,1.5 0 0 1 1.5,1.5 v10 a1.5,1.5 0 0 1 -1.5,1.5 h-18 a1.5,1.5 0 0 1 -1.5,-1.5 v-10 a1.5,1.5 0 0 1 1.5,-1.5 z m1.5,2.5 v8 h15 v-8 z" />
+    <!-- Ayak -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M9,19.5 h6 v1.5 h-6 z" />
+</vector>
