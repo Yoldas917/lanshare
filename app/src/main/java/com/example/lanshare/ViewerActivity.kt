@@ -47,6 +47,9 @@ class ViewerActivity : AppCompatActivity(), SignalingClient.Listener {
         super.onCreate(savedInstanceState)
         binding = ActivityViewerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        // Izleme surerken TV ekrani uykuya/karartmaya gecmesin
+        // (activity kapaninca flag otomatik kalkar; wakelock gerekmez)
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         roomId = intent.getStringExtra(EXTRA_ROOM) ?: "demo"
         host = intent.getStringExtra(EXTRA_HOST) ?: "192.168.1.165"
@@ -85,6 +88,13 @@ class ViewerActivity : AppCompatActivity(), SignalingClient.Listener {
                 "%.1f Mbps · %s".format(mbps, codec)
             Log.d(TAG, "[Viewer][stats] $text".replace("\n", "  "))
             runOnUiThread { binding.statsText.text = text }
+        }
+        // A/V senkron gostergesi (ses track'i varsa)
+        session.pollAvSyncStats { sync ->
+            if (sync != null) {
+                Log.d(TAG, "[Viewer][sync] audioJit=%.0fms videoJit=%.0fms fark=%+.0fms"
+                    .format(sync.audioJitterMs, sync.videoJitterMs, sync.diffMs))
+            }
         }
     }
 

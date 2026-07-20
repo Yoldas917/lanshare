@@ -223,6 +223,8 @@ class WebRtcSession(
         val encoderImpl: String?,
         val width: Int,
         val height: Int,
+        val targetBitrateBps: Long,    // BWE'nin encoder'a verdigi hedef
+        val totalEncodeTimeS: Double,  // toplam encode suresi (delta/frame -> ms/frame)
         val timestampUs: Double
     )
 
@@ -244,11 +246,46 @@ class WebRtcSession(
                         encoderImpl = m["encoderImplementation"] as? String,
                         width = (m["frameWidth"] as? Number)?.toInt() ?: 0,
                         height = (m["frameHeight"] as? Number)?.toInt() ?: 0,
+                        targetBitrateBps = (m["targetBitrate"] as? Number)?.toLong() ?: 0L,
+                        totalEncodeTimeS = (m["totalEncodeTime"] as? Number)?.toDouble() ?: 0.0,
                         timestampUs = report.timestampUs
                     )
                 }
             }
             cb(result)
+        }
+    }
+
+    data class AvSyncStats(
+        val audioJitterMs: Double,   // ortalama audio jitter buffer bekleme
+        val videoJitterMs: Double,   // ortalama video jitter buffer bekleme
+        val diffMs: Double           // audio - video (pozitif = ses daha cok bekliyor)
+    )
+
+    /**
+     * Izleyici tarafi A/V senkron gostergesi: her iki track'in jitter buffer
+     * ortalama bekleme suresi ve farki. (WebRTC senkronu RTCP SR ile otomatik
+     * yapar; bu metrik dogrulama/teshis icindir.)
+     */
+    fun pollAvSyncStats(cb: (AvSyncStats?) -> Unit) {
+        val pc = peerConnection
+        if (pc == null) { cb(null); return }
+        pc.getStats { report ->
+            var aJit = -1.0; var vJit = -1.0
+            for (st in report.statsMap.values) {
+                if (st.type != "inbound-rtp") continue
+                val m = st.members
+                val kind = m["kind"] ?: m["mediaType"]
+                val delay = (m["jitterBufferDelay"] as? Number)?.toDouble() ?: continue
+                val emitted = (m["jitterBufferEmittedCount"] as? Number)?.toDouble() ?: continue
+                if (emitted <= 0) continue
+                val avgMs = delay / emitted * 1000.0
+                when (kind) {
+                    "audio" -> aJit = avgMs
+                    "video" -> vJit = avgMs
+                }
+            }
+            cb(if (aJit >= 0 && vJit >= 0) AvSyncStats(aJit, vJit, aJit - vJit) else null)
         }
     }
 

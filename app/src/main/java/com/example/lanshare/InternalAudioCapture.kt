@@ -27,12 +27,18 @@ class InternalAudioCapture(
     @Volatile private var running = false
     private var thread: Thread? = null
 
-    // ~1 saniyelik ring buffer (16-bit PCM)
-    private val ringSize = sampleRate * channels * 2
+    // Gecikme butcesi: ring'de en fazla ~60ms birikmesine izin verilir. Fazlasi
+    // ATILIR (en eski veri). Boylece ses hatti WebRTC'ye girmeden once sabit bir
+    // gecikme biriktiremez (onceki 1 sn'lik ring, sesin kalici geride kalmasina
+    // yol aciyordu: ADM drenaja baslamadan ring doluyor, birikinti hic erimiyordu).
+    private val bytesPerMs = sampleRate * channels * 2 / 1000
+    private val maxBacklogBytes = 60 * bytesPerMs          // ~60 ms tavan
+    private val ringSize = 240 * bytesPerMs                // fiziksel ~240 ms
     private val ring = ByteArray(ringSize)
     private var writePos = 0
     private var readPos = 0
     private var available = 0
+    private var droppedBytes = 0L
     private val lock = Object()
 
     @SuppressLint("MissingPermission")
@@ -54,7 +60,11 @@ class InternalAudioCapture(
         val minBuf = AudioRecord.getMinBufferSize(
             sampleRate, channelMask, AudioFormat.ENCODING_PCM_16BIT
         )
-        val bufSize = maxOf(minBuf, sampleRate * channels * 2 / 5) // ~200 ms
+        // AudioRecord ic tamponu kucuk tut (min'in altina inme); okumayi 10ms'lik
+        // parcalarla yap — buyuk parca (onceki ~200ms) parca basina ekstra ses
+        // gecikmesi demekti.
+        val chunkBytes = 10 * bytesPerMs
+        val bufSize = maxOf(minBuf, 4 * chunkBytes)
 
         return try {
             val record = AudioRecord.Builder()
@@ -66,13 +76,14 @@ class InternalAudioCapture(
             record.startRecording()
             running = true
             thread = Thread {
-                val tmp = ByteArray(bufSize)
+                val tmp = ByteArray(chunkBytes)
                 while (running) {
                     val n = record.read(tmp, 0, tmp.size)
                     if (n > 0) writeToRing(tmp, n)
                 }
             }.apply { name = "InternalAudioCapture"; start() }
-            Log.d(TAG, "InternalAudioCapture basladi (${sampleRate}Hz, ch=$channels)")
+            Log.d(TAG, "InternalAudioCapture basladi (${sampleRate}Hz, ch=$channels, " +
+                "chunk=10ms, backlogTavan=60ms)")
             true
         } catch (e: Exception) {
             Log.e(TAG, "InternalAudioCapture baslatilamadi: ${e.message}")
@@ -88,12 +99,26 @@ class InternalAudioCapture(
                 if (available < ringSize) {
                     available++
                 } else {
-                    // buffer dolu: en eskiyi ustune yaz
                     readPos = (readPos + 1) % ringSize
                 }
             }
+            // Gecikme tavani: 60ms'den fazlasi birikmisse en eskiyi at.
+            // (ADM heniz drenaja baslamadiysa ya da geride kaldiysa ses,
+            // videoya gore sabit sekilde gecikmesin.)
+            if (available > maxBacklogBytes) {
+                val drop = available - maxBacklogBytes
+                readPos = (readPos + drop) % ringSize
+                available = maxBacklogBytes
+                droppedBytes += drop
+            }
         }
     }
+
+    /** Ring'de bekleyen (henuz WebRTC'ye verilmemis) ses miktari, ms. */
+    fun backlogMs(): Int = synchronized(lock) { available / bytesPerMs }
+
+    /** Gecikme tavani nedeniyle atilan toplam sure, ms (teshis). */
+    fun droppedMs(): Long = synchronized(lock) { droppedBytes / bytesPerMs }
 
     /**
      * WebRTC ADM kayit callback'inden cagrilir. dst buffer'i tamamen ic ses

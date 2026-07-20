@@ -108,6 +108,8 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
         super.onCreate(savedInstanceState)
         binding = ActivityPublisherBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        // Yayin surerken ekran kararmasin/uyumasin (activity kapaninca otomatik kalkar)
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         roomId = intent.getStringExtra(EXTRA_ROOM) ?: "demo"
         host = intent.getStringExtra(EXTRA_HOST) ?: "192.168.1.165"
@@ -253,6 +255,7 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
     private var lastCapturedFrames = 0L
     private var lastFramesEncoded = 0L
     private var lastFramesSent = 0L
+    private var lastEncodeTimeS = 0.0
     private var fpsCapturerRef: ScreenCapturerAndroid? = null
     private val fpsDiagRunnable = object : Runnable {
         override fun run() {
@@ -261,15 +264,30 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
             val capFps = captured - lastCapturedFrames
             lastCapturedFrames = captured
 
+            val audioInfo = internalAudio?.let {
+                " audioBacklog=${it.backlogMs()}ms(drop=${it.droppedMs()}ms)"
+            } ?: ""
             session.pollOutboundVideoStats { s ->
                 if (s != null) {
                     val encDelta = s.framesEncoded - lastFramesEncoded
                     val sentDelta = s.framesSent - lastFramesSent
                     lastFramesEncoded = s.framesEncoded
                     lastFramesSent = s.framesSent
+                    val encMs = if (encDelta > 0)
+                        "%.1f".format((s.totalEncodeTimeS - lastEncodeTimeS) * 1000.0 / encDelta)
+                    else "-"
+                    lastEncodeTimeS = s.totalEncodeTimeS
                     Log.d(TAG, "[fps] capture=$capFps encode=$encDelta sent=$sentDelta " +
                         "statsFps=${s.fps} ${s.width}x${s.height} " +
-                        "limit=${s.qualityLimitation} enc=${s.encoderImpl}")
+                        "limit=${s.qualityLimitation} target=${s.targetBitrateBps / 1000}kbps " +
+                        "encMs=$encMs enc=${s.encoderImpl}$audioInfo")
+                    if (s.encoderImpl?.contains("SW", ignoreCase = true) == true ||
+                        s.encoderImpl?.contains("libaom") == true ||
+                        s.encoderImpl?.contains("OpenH264", ignoreCase = true) == true
+                    ) {
+                        Log.w(TAG, "[fps] YAZILIM encoder'a dusulmus: ${s.encoderImpl} — " +
+                            "1080p60 icin donanim gerekli (HEVC fallback dusunulebilir)")
+                    }
                     if (capFps in 1..(VIDEO_FPS - 15)) {
                         Log.w(TAG, "[fps] capture ~$capFps: kaynak $VIDEO_FPS uretmiyor " +
                             "(statik ekran veya panel siniri olabilir)")
@@ -339,6 +357,15 @@ class PublisherActivity : AppCompatActivity(), SignalingClient.Listener {
 
         override fun onIceConnectionChange(state: PeerConnection.IceConnectionState) {
             status("ICE: $state")
+            if (state == PeerConnection.IceConnectionState.CONNECTED) {
+                // LAN: BWE'nin dusuk baslayip yavas tirmanmasini bekleme —
+                // hedef bitrate'e dogrudan kickstart et.
+                val ok = session.peerConnection()?.setBitrate(
+                    VIDEO_MIN_BITRATE_BPS, VIDEO_MAX_BITRATE_BPS, VIDEO_MAX_BITRATE_BPS
+                )
+                Log.d(TAG, "setBitrate kickstart (min=$VIDEO_MIN_BITRATE_BPS " +
+                    "cur/max=$VIDEO_MAX_BITRATE_BPS) -> $ok")
+            }
         }
 
         override fun onConnectionChange(state: PeerConnection.PeerConnectionState) {
