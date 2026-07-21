@@ -55,7 +55,14 @@ class MainActivity : AppCompatActivity() {
                     val ok = PairingSession.start(applicationContext)
                     runOnUiThread {
                         binding.pairButton.isEnabled = true
-                        if (!ok) Toast.makeText(this, R.string.st_error, Toast.LENGTH_SHORT).show()
+                        if (!ok) {
+                            // st_error format arg'lidir (%1$s) — argumani doldur
+                            Toast.makeText(
+                                this,
+                                getString(R.string.st_error, "signaling"),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                         updatePairingUi()
                         renderNearby()
                     }

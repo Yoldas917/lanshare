@@ -50,18 +50,15 @@ object PairingSession {
         if (isActive) return true
         val srv = EmbeddedSignalingServer { role -> onInvite?.invoke(role) }
         return try {
-            srv.start() // kendi selector thread'ini acar
-            var waited = 0
-            while (srv.boundPort <= 0 && waited < 3000) {
-                Thread.sleep(50)
-                waited += 50
-            }
-            if (srv.boundPort <= 0) {
+            srv.start() // asenkron: kendi selector thread'ini acar
+            // onStart() tamamlanip GERCEK ephemeral port belli olana kadar bekle
+            if (!srv.awaitStart(5000)) {
                 srv.shutdown()
-                Log.e(TAG, "[Pairing] sunucu porta baglanamadi")
+                Log.e(TAG, "[Pairing] sunucu porta baglanamadi (onStart zaman asimi)")
                 false
             } else {
                 server = srv
+                // NSD kaydi yalnizca gecerli (gercek) portla yapilir
                 nsd = NsdHelper(context, nsdListener).also {
                     it.start(srv.boundPort, "LanShare " + Build.MODEL)
                 }

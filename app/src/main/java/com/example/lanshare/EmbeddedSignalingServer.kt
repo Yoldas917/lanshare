@@ -6,6 +6,8 @@ import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.server.WebSocketServer
 import org.json.JSONObject
 import java.net.InetSocketAddress
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 /**
  * Cihaz ici (gomulu) WebRTC signaling sunucusu — ~/signaling-server/server.js'in
@@ -35,13 +37,29 @@ class EmbeddedSignalingServer(
     var boundPort: Int = -1
         private set
 
+    private val startLatch = CountDownLatch(1)
+
     init {
         isReuseAddr = true
     }
 
     override fun onStart() {
-        boundPort = address.port
+        // DIKKAT: address.port DEGIL — constructor'a verilen adres port 0'dir.
+        // getPort() bind edilmis soketin GERCEK ephemeral portunu dondurur
+        // (onStart bind sonrasi cagrilir; bytecode dogrulandi).
+        boundPort = port
         Log.i(TAG, "[EmbedSrv] gomulu signaling calisiyor: 0.0.0.0:$boundPort")
+        startLatch.countDown()
+    }
+
+    /**
+     * start() asenkron; onStart tamamlanana (gercek port belli olana) kadar
+     * bekler. true = sunucu ayakta ve boundPort gecerli.
+     */
+    fun awaitStart(timeoutMs: Long): Boolean = try {
+        startLatch.await(timeoutMs, TimeUnit.MILLISECONDS) && boundPort > 0
+    } catch (_: InterruptedException) {
+        false
     }
 
     override fun onOpen(conn: WebSocket, handshake: ClientHandshake) {
