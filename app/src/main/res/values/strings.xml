@@ -32,7 +32,6 @@
 
     <!-- Language -->
     <string name="language_label">Language</string>
-    <string name="lang_system">System</string>
     <string name="lang_tr" translatable="false">Türkçe</string>
     <string name="lang_en" translatable="false">English</string>
     <string name="lang_ar" translatable="false">العربية</string>
@@ -41,18 +40,19 @@
 
     <!-- Help -->
     <string name="help_card_title">How to use?</string>
-    <string name="help_card_desc">Setup and pairing in 5 steps</string>
+    <string name="help_card_desc">Step-by-step guide</string>
     <string name="help_title">How to use</string>
-    <string name="help_s1_title">1. Same network</string>
-    <string name="help_s1_body">Both devices (broadcaster and viewer) must be connected to the same Wi-Fi / modem. Screen sharing does not work over the internet; everything stays on your local network.</string>
-    <string name="help_s2_title">2. Server address</string>
-    <string name="help_s2_body">A small signaling server runs on your computer. Enter its address as IP:PORT (e.g. 192.168.1.165:8080) on both devices. You can find the IP in your computer\'s network settings.</string>
-    <string name="help_s3_title">3. Same room name</string>
-    <string name="help_s3_body">Devices find each other by room name. Type the same room name (e.g. \"demo\") on both devices. One taps Broadcast, the other taps Watch.</string>
-    <string name="help_s4_title">4. Audio and quality</string>
-    <string name="help_s4_body">\"Share audio too\" sends the device\'s media sound along with the screen. Quality and frame-rate settings let you trade sharpness for smoothness: 720p · 60 fps is the smoothest choice on most devices; 1080p is sharper but heavier.</string>
-    <string name="help_s5_title">5. Protected content</string>
-    <string name="help_s5_body">Only unprotected content can be shared. DRM-protected apps (Netflix etc.) will appear as a black screen and their audio may stay silent — this is normal and by design.</string>
+    <string name="help_step1">Install and open this app on both devices.</string>
+    <string name="help_step2">Tap \"Pair / Be visible\" on both devices.</string>
+    <string name="help_step3">Wait a moment; the other device will appear under \"Nearby devices\".</string>
+    <string name="help_step4">On the device card, tap \"Share my screen\". (To watch that device instead, choose \"Watch this device\".)</string>
+    <string name="help_step5">Approve the screen sharing permission.</string>
+    <string name="help_step6">Sharing starts; your screen appears on the other device.</string>
+    <string name="help_step7">To finish, tap \"Disconnect\".</string>
+    <string name="help_tips_title">Tips</string>
+    <string name="help_tip1">Both devices must be on the same Wi-Fi network.</string>
+    <string name="help_tip2">To send audio too, turn on \"Share audio too\" before sharing.</string>
+    <string name="help_tip3">You can choose quality and frame rate in the settings.</string>
 
     <!-- Publisher screen -->
     <string name="pub_screen_title">BROADCAST</string>

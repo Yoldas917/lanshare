@@ -25,21 +25,21 @@
     <string name="bitrate_auto">Otomatik</string>
 
     <string name="language_label">Dil</string>
-    <string name="lang_system">Sistem</string>
 
     <string name="help_card_title">Nasıl kullanılır?</string>
-    <string name="help_card_desc">5 adımda kurulum ve eşleşme</string>
+    <string name="help_card_desc">Adım adım kılavuz</string>
     <string name="help_title">Nasıl kullanılır</string>
-    <string name="help_s1_title">1. Aynı ağ</string>
-    <string name="help_s1_body">İki cihaz da (yayıncı ve izleyici) aynı Wi-Fi\'ye / modeme bağlı olmalı. Paylaşım internet üzerinden çalışmaz; her şey yerel ağınızda kalır.</string>
-    <string name="help_s2_title">2. Sunucu adresi</string>
-    <string name="help_s2_body">Bilgisayarınızda küçük bir sinyalleşme sunucusu çalışır. Adresini iki cihazda da IP:PORT biçiminde girin (örn. 192.168.1.165:8080). IP\'yi bilgisayarınızın ağ ayarlarından bulabilirsiniz.</string>
-    <string name="help_s3_title">3. Aynı oda adı</string>
-    <string name="help_s3_body">Cihazlar birbirini oda adıyla bulur. İki cihazda da aynı oda adını yazın (örn. \"demo\"). Biri Yayınla\'ya, diğeri İzle\'ye dokunsun.</string>
-    <string name="help_s4_title">4. Ses ve kalite</string>
-    <string name="help_s4_body">\"Sesi de paylaş\" ekranla birlikte cihazın medya sesini gönderir. Kalite ve kare hızı ayarlarıyla netlik–akıcılık dengesini siz seçersiniz: çoğu cihazda en akıcı seçim 720p · 60 fps\'tir; 1080p daha net ama daha ağırdır.</string>
-    <string name="help_s5_title">5. Korumalı içerik</string>
-    <string name="help_s5_body">Yalnızca korumasız içerik paylaşılabilir. DRM korumalı uygulamalar (Netflix vb.) siyah ekran olarak görünür, sesleri de gelmeyebilir — bu normaldir ve tasarım gereğidir.</string>
+    <string name="help_step1">Bu uygulamayı her iki cihaza da kur ve aç.</string>
+    <string name="help_step2">İki cihazda da \"Eşleştir / Görünür ol\"a dokun.</string>
+    <string name="help_step3">Kısa süre bekle; diğer cihaz \"Yakındaki cihazlar\" listesinde görünecek.</string>
+    <string name="help_step4">Ekranını göndereceğin cihazın kartında \"Ekranımı paylaş\"a dokun. (O cihazı izlemek için \"Bu cihazı izle\"yi seç.)</string>
+    <string name="help_step5">Ekran paylaşım iznini onayla.</string>
+    <string name="help_step6">Paylaşım başlar; ekranın karşı cihazda görünür.</string>
+    <string name="help_step7">Bitirmek için \"Bağlantıyı Kes\"e dokun.</string>
+    <string name="help_tips_title">İpuçları</string>
+    <string name="help_tip1">İki cihaz da aynı Wi-Fi ağında olmalı.</string>
+    <string name="help_tip2">Sesi de göndermek için paylaşımdan önce \"Sesi de paylaş\"ı aç.</string>
+    <string name="help_tip3">Kalite ve kare hızını ayarlardan seçebilirsin.</string>
 
     <string name="pub_screen_title">YAYIN</string>
     <string name="st_starting">Başlatılıyor…</string>

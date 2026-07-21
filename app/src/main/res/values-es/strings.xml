@@ -25,21 +25,21 @@
     <string name="bitrate_auto">Automática</string>
 
     <string name="language_label">Idioma</string>
-    <string name="lang_system">Sistema</string>
 
     <string name="help_card_title">¿Cómo se usa?</string>
-    <string name="help_card_desc">Configuración y emparejamiento en 5 pasos</string>
+    <string name="help_card_desc">Guía paso a paso</string>
     <string name="help_title">Cómo se usa</string>
-    <string name="help_s1_title">1. La misma red</string>
-    <string name="help_s1_body">Ambos dispositivos (emisor y espectador) deben estar conectados al mismo Wi-Fi / módem. La compartición no funciona por internet; todo se queda en tu red local.</string>
-    <string name="help_s2_title">2. Dirección del servidor</string>
-    <string name="help_s2_body">En tu ordenador se ejecuta un pequeño servidor de señalización. Introduce su dirección como IP:PORT (p. ej. 192.168.1.165:8080) en ambos dispositivos. Encontrarás la IP en la configuración de red de tu ordenador.</string>
-    <string name="help_s3_title">3. El mismo nombre de sala</string>
-    <string name="help_s3_body">Los dispositivos se encuentran por el nombre de la sala. Escribe el mismo nombre (p. ej. \"demo\") en ambos. Uno pulsa Emitir y el otro pulsa Ver.</string>
-    <string name="help_s4_title">4. Audio y calidad</string>
-    <string name="help_s4_body">\"Compartir también el audio\" envía el sonido multimedia junto con la pantalla. Con los ajustes de calidad y fotogramas eliges entre nitidez y fluidez: 720p · 60 fps es la opción más fluida en la mayoría de dispositivos; 1080p es más nítido pero más exigente.</string>
-    <string name="help_s5_title">5. Contenido protegido</string>
-    <string name="help_s5_body">Solo se puede compartir contenido sin protección. Las apps con DRM (Netflix, etc.) se verán como una pantalla negra y su sonido puede no llegar — es normal y es intencionado.</string>
+    <string name="help_step1">Instala y abre esta app en ambos dispositivos.</string>
+    <string name="help_step2">Toca \"Emparejar / Ser visible\" en ambos dispositivos.</string>
+    <string name="help_step3">Espera un momento; el otro dispositivo aparecerá en \"Dispositivos cercanos\".</string>
+    <string name="help_step4">En la tarjeta del dispositivo, toca \"Compartir mi pantalla\". (Si prefieres ver ese dispositivo, elige \"Ver este dispositivo\".)</string>
+    <string name="help_step5">Concede el permiso de compartir pantalla.</string>
+    <string name="help_step6">La compartición comienza; tu pantalla aparece en el otro dispositivo.</string>
+    <string name="help_step7">Para terminar, toca \"Desconectar\".</string>
+    <string name="help_tips_title">Consejos</string>
+    <string name="help_tip1">Ambos dispositivos deben estar en la misma red Wi-Fi.</string>
+    <string name="help_tip2">Para enviar también el audio, activa \"Compartir también el audio\" antes de compartir.</string>
+    <string name="help_tip3">Puedes elegir la calidad y los fotogramas por segundo en los ajustes.</string>
 
     <string name="pub_screen_title">EMISIÓN</string>
     <string name="st_starting">Iniciando…</string>

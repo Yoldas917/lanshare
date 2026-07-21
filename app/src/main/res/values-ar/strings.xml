@@ -25,21 +25,21 @@
     <string name="bitrate_auto">تلقائي</string>
 
     <string name="language_label">اللغة</string>
-    <string name="lang_system">لغة النظام</string>
 
     <string name="help_card_title">كيفية الاستخدام؟</string>
-    <string name="help_card_desc">الإعداد والاقتران في 5 خطوات</string>
+    <string name="help_card_desc">دليل خطوة بخطوة</string>
     <string name="help_title">كيفية الاستخدام</string>
-    <string name="help_s1_title">1. الشبكة نفسها</string>
-    <string name="help_s1_body">يجب أن يكون الجهازان (الباثّ والمشاهد) متصلين بنفس شبكة Wi-Fi / المودم. لا تعمل المشاركة عبر الإنترنت؛ كل شيء يبقى داخل شبكتك المحلية.</string>
-    <string name="help_s2_title">2. عنوان الخادم</string>
-    <string name="help_s2_body">يعمل خادم إشارات صغير على حاسوبك. أدخل عنوانه بصيغة IP:PORT (مثل 192.168.1.165:8080) على كلا الجهازين. يمكنك إيجاد عنوان IP في إعدادات الشبكة لحاسوبك.</string>
-    <string name="help_s3_title">3. اسم الغرفة نفسه</string>
-    <string name="help_s3_body">تجد الأجهزة بعضها عبر اسم الغرفة. اكتب اسم الغرفة نفسه (مثل \"demo\") على الجهازين. يضغط أحدهما على «بثّ» والآخر على «مشاهدة».</string>
-    <string name="help_s4_title">4. الصوت والجودة</string>
-    <string name="help_s4_body">خيار «مشاركة الصوت أيضًا» يرسل صوت الوسائط مع الشاشة. تتيح لك إعدادات الجودة ومعدل الإطارات الموازنة بين الحدّة والسلاسة: الخيار الأسلس على معظم الأجهزة هو 720p · 60 إطارًا؛ أما 1080p فأكثر حدّة لكنه أثقل.</string>
-    <string name="help_s5_title">5. المحتوى المحمي</string>
-    <string name="help_s5_body">يمكن مشاركة المحتوى غير المحمي فقط. التطبيقات المحمية بإدارة الحقوق الرقمية (مثل Netflix) ستظهر كشاشة سوداء وقد لا يصل صوتها — هذا أمر طبيعي ومقصود.</string>
+    <string name="help_step1">ثبّت هذا التطبيق وافتحه على كلا الجهازين.</string>
+    <string name="help_step2">اضغط \"إقران / كن مرئيًا\" على كلا الجهازين.</string>
+    <string name="help_step3">انتظر لحظة؛ سيظهر الجهاز الآخر ضمن \"الأجهزة القريبة\".</string>
+    <string name="help_step4">في بطاقة الجهاز، اضغط \"مشاركة شاشتي\". (لمشاهدة ذلك الجهاز بدلًا من ذلك، اختر \"مشاهدة هذا الجهاز\".)</string>
+    <string name="help_step5">وافق على إذن مشاركة الشاشة.</string>
+    <string name="help_step6">تبدأ المشاركة وتظهر شاشتك على الجهاز الآخر.</string>
+    <string name="help_step7">للإنهاء، اضغط \"قطع الاتصال\".</string>
+    <string name="help_tips_title">نصائح</string>
+    <string name="help_tip1">يجب أن يكون الجهازان متصلين بنفس شبكة Wi-Fi.</string>
+    <string name="help_tip2">لإرسال الصوت أيضًا، فعّل \"مشاركة الصوت أيضًا\" قبل بدء المشاركة.</string>
+    <string name="help_tip3">يمكنك اختيار الجودة ومعدل الإطارات من الإعدادات.</string>
 
     <string name="pub_screen_title">البثّ</string>
     <string name="st_starting">جارٍ البدء…</string>

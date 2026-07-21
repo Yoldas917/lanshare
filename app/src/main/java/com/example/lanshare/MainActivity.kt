@@ -34,11 +34,8 @@ class MainActivity : AppCompatActivity() {
 
         // Ilk acilista varsayilan dil INGILIZCE (sistem dili ne olursa olsun).
         // Kullanicinin sonraki secimi (autoStoreLocales) her zaman onceliklidir.
-        if (!settings.langInitialized) {
-            settings.langInitialized = true
-            if (AppCompatDelegate.getApplicationLocales().isEmpty) {
-                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"))
-            }
+        if (AppCompatDelegate.getApplicationLocales().isEmpty) {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"))
         }
 
         restoreState()
@@ -114,20 +111,15 @@ class MainActivity : AppCompatActivity() {
         binding.langChips.setOnCheckedStateChangeListener { _, ids ->
             val tag = when (ids.firstOrNull()) {
                 binding.chipLangTr.id -> "tr"
-                binding.chipLangEn.id -> "en"
                 binding.chipLangAr.id -> "ar"
                 binding.chipLangEs.id -> "es"
                 binding.chipLangDe.id -> "de"
-                else -> null // sistem dili
+                else -> "en"
             }
             val current = AppCompatDelegate.getApplicationLocales().toLanguageTags()
-            val target = tag ?: ""
-            if (current != target) {
+            if (current != tag) {
                 // autoStoreLocales sayesinde kalici; activity otomatik yeniden olusur
-                AppCompatDelegate.setApplicationLocales(
-                    if (tag == null) LocaleListCompat.getEmptyLocaleList()
-                    else LocaleListCompat.forLanguageTags(tag)
-                )
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
             }
         }
     }
@@ -284,7 +276,7 @@ class MainActivity : AppCompatActivity() {
                 lang.startsWith("ar") -> binding.chipLangAr.id
                 lang.startsWith("es") -> binding.chipLangEs.id
                 lang.startsWith("de") -> binding.chipLangDe.id
-                else -> binding.chipLangSys.id
+                else -> binding.chipLangEn.id
             }
         )
     }

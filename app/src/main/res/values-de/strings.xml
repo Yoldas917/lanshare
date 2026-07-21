@@ -25,21 +25,21 @@
     <string name="bitrate_auto">Automatisch</string>
 
     <string name="language_label">Sprache</string>
-    <string name="lang_system">System</string>
 
     <string name="help_card_title">Wie funktioniert\'s?</string>
-    <string name="help_card_desc">Einrichtung und Kopplung in 5 Schritten</string>
+    <string name="help_card_desc">Schritt-für-Schritt-Anleitung</string>
     <string name="help_title">So funktioniert\'s</string>
-    <string name="help_s1_title">1. Dasselbe Netzwerk</string>
-    <string name="help_s1_body">Beide Geräte (Sender und Zuschauer) müssen mit demselben WLAN / Modem verbunden sein. Die Übertragung funktioniert nicht über das Internet; alles bleibt in Ihrem lokalen Netzwerk.</string>
-    <string name="help_s2_title">2. Serveradresse</string>
-    <string name="help_s2_body">Auf Ihrem Computer läuft ein kleiner Signalisierungsserver. Geben Sie seine Adresse auf beiden Geräten als IP:PORT ein (z. B. 192.168.1.165:8080). Die IP finden Sie in den Netzwerkeinstellungen Ihres Computers.</string>
-    <string name="help_s3_title">3. Derselbe Raumname</string>
-    <string name="help_s3_body">Die Geräte finden einander über den Raumnamen. Geben Sie auf beiden Geräten denselben Namen ein (z. B. \"demo\"). Eines tippt auf Übertragen, das andere auf Ansehen.</string>
-    <string name="help_s4_title">4. Ton und Qualität</string>
-    <string name="help_s4_body">\"Ton mitübertragen\" sendet den Medienton zusammen mit dem Bildschirm. Mit den Einstellungen für Qualität und Bildrate wählen Sie zwischen Schärfe und Flüssigkeit: 720p · 60 fps ist auf den meisten Geräten am flüssigsten; 1080p ist schärfer, aber anspruchsvoller.</string>
-    <string name="help_s5_title">5. Geschützte Inhalte</string>
-    <string name="help_s5_body">Nur ungeschützte Inhalte können geteilt werden. DRM-geschützte Apps (Netflix usw.) erscheinen als schwarzer Bildschirm, ihr Ton kann ausbleiben — das ist normal und beabsichtigt.</string>
+    <string name="help_step1">Installieren und öffnen Sie diese App auf beiden Geräten.</string>
+    <string name="help_step2">Tippen Sie auf beiden Geräten auf \"Koppeln / Sichtbar sein\".</string>
+    <string name="help_step3">Warten Sie einen Moment; das andere Gerät erscheint unter \"Geräte in der Nähe\".</string>
+    <string name="help_step4">Tippen Sie auf der Gerätekarte auf \"Meinen Bildschirm teilen\". (Um stattdessen dieses Gerät anzusehen, wählen Sie \"Dieses Gerät ansehen\".)</string>
+    <string name="help_step5">Erteilen Sie die Berechtigung zur Bildschirmübertragung.</string>
+    <string name="help_step6">Die Übertragung beginnt; Ihr Bildschirm erscheint auf dem anderen Gerät.</string>
+    <string name="help_step7">Zum Beenden tippen Sie auf \"Verbindung trennen\".</string>
+    <string name="help_tips_title">Tipps</string>
+    <string name="help_tip1">Beide Geräte müssen mit demselben WLAN verbunden sein.</string>
+    <string name="help_tip2">Um auch den Ton zu senden, aktivieren Sie vor der Übertragung \"Ton mitübertragen\".</string>
+    <string name="help_tip3">Qualität und Bildrate können Sie in den Einstellungen wählen.</string>
 
     <string name="pub_screen_title">ÜBERTRAGUNG</string>
     <string name="st_starting">Wird gestartet…</string>
